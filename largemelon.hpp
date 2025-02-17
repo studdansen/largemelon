@@ -25,7 +25,7 @@ namespace largemelon {
 	 * @param c Character.
 	 * @return String representing a character's "escaped" representation,
 	 *     including whitespace characters and other ANSI control codes.*/
-	std::string escchr(const char& c) {
+	inline constexpr std::string escchr(const char c) {
 		switch (c) {
 			case '\n': return { '\\', 'n' };
 			case '\r': return { '\\', 'r' };
@@ -42,7 +42,7 @@ namespace largemelon {
 	 * @param s String.
 	 * @return Copy of @c s with certain characters escaped, namely
 	 *     whitespace.*/
-	std::string escstr(const std::string& s) {
+	inline std::string escstr(const std::string& s) {
 		std::string es;
 		es = "";
 		for (auto si=s.cbegin(); si!=s.cend(); si++)
