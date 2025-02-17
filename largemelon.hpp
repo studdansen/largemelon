@@ -1,5 +1,6 @@
 /**@file
- * Single-header C++ library for building parsers using Ragel and Lemon.*/
+ * @brief Single-header C++ framework for bridging between a Ragel-generated
+ *   scanner and a Lemon-generated parser.*/
 
 #ifndef LARGEMELON_LARGEMELON_HPP
 #define LARGEMELON_LARGEMELON_HPP
@@ -53,10 +54,14 @@ namespace largemelon {
 	
 	/**@brief Location of a span of text in source code.*/
 	struct text_loc {
-		size_t	first_lno,	///< Line number of first character.
-				first_cno,	///< Column number of first character.
-				last_lno,	///< Line number of last character.
-				last_cno;	///< Column number of last character.
+		/**@brief Line number of first character.*/
+		size_t first_lno;
+		/**@brief Column number of first character.*/
+		size_t first_cno;
+		/**@brief Line number of last character.*/
+		size_t last_lno;
+		/**@brief Column number of last character.*/
+		size_t last_cno;
 	};
 	
 	/**@brief Equality operator for @c text_loc.
