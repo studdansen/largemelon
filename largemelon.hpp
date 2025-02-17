@@ -69,7 +69,7 @@ namespace largemelon {
 	 * @param rhs Second position in text.
 	 * @return @c true if @c lhs and @c rhs have identical data member values,
 	 *     @c false otherwise.*/
-	static constexpr bool operator==(const text_loc &lhs,
+	inline constexpr bool operator==(const text_loc &lhs,
 		const text_loc &rhs) {
 		return (lhs.first_lno == rhs.first_lno)
 			&& (lhs.first_cno == rhs.first_cno)
@@ -81,7 +81,7 @@ namespace largemelon {
 	 * @param lhs First position in text.
 	 * @param rhs Second position in text.
 	 * @return Equivalent to <code>!(lhs == rhs)</code>.*/
-	static constexpr bool operator!=(const text_loc &lhs,
+	inline constexpr bool operator!=(const text_loc &lhs,
 		const text_loc &rhs) {
 		return !(lhs == rhs);
 	}
@@ -92,7 +92,7 @@ namespace largemelon {
 	 * @return @c true if the span of text delimited by @c lhs comes entirely
 	 *     before the span delimited by @c rhs, @c false otherwise.
 	 * @note This is used to sort error messages.*/
-	static constexpr bool operator <(const text_loc &lhs,
+	inline constexpr bool operator <(const text_loc &lhs,
 		const text_loc &rhs) {
 		return (lhs.last_lno < rhs.first_lno)
 			|| (lhs.last_lno == rhs.first_lno
@@ -196,7 +196,7 @@ namespace largemelon {
 	 * @return Location value equal to @c first_loc.first_lno,
 	 *     @c first_loc.first_cno, @c last_loc.last_lno, and
 	 *     @c last_loc.last_cno.*/
-	static constexpr text_loc span_loc(const text_loc &first_loc,
+	inline constexpr text_loc span_loc(const text_loc &first_loc,
 		const text_loc &last_loc) {
 		return { first_loc.first_lno, first_loc.first_cno,
 			last_loc.last_lno, last_loc.last_cno };
