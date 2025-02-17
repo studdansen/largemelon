@@ -457,6 +457,26 @@ namespace largemelon {
 	
 	
 	
+	/**@brief Collection of registers managed by a Ragel-generated scanner.*/
+	struct ragel_scanner_pers_type {
+		/**@brief Pointer to first input character.*/
+		const char *p;
+		/**@brief Pointer to just after last input character.*/
+		const char *pe;
+		/**@brief Pointer to end of opened file, if applicable.*/
+		const char *eof;
+		/**@brief Register for current parsing state.*/
+		int cs;
+		/**@brief Register for most recent successful pattern match.*/
+		int act;
+		/**@brief Pointer to first character of found token.*/
+		const char *te;
+		/**@brief Pointer to just after end of found token.*/
+		const char *ts;
+	};
+	
+	
+	
 } // namespace largemelon
 
 #endif // LARGEMELON_LARGEMELON_HPP
