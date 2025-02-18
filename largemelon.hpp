@@ -258,6 +258,27 @@ namespace largemelon {
 		return std::string(ts, te - ts);
 	}
 	
+	/**@brief Returns the string spanning between two pointers in a
+	 *   <code>char *</code> instance, with some characters trimmed from the
+	 *   beginning and end of the resultant string.
+	 * @param ts Position of first character in returned string.
+	 * @param te Position one past the last character in returned string.
+	 * @param ltrim Number of characters to remove from beginning of string.
+	 * @param rtrim Number of characters to remove from end of string.
+	 * @return String starting @c ltrim characters after character at position
+	 *   @c ts and ending @c rtrim characters before character at position
+	 *   @c te.
+	 * @warning @c ts and @c te cannot be null pointers (@c nullptr), and the
+	 *   result of <code>(te - rtrim) - (ts + ltrim)</code> must be zero or
+	 *   greater.*/
+	std::string toktext(const char *ts, const char *te, const size_t ltrim,
+		const size_t rtrim) {
+		assert(ts != nullptr);
+		assert(te != nullptr);
+		assert((te - rtrim) - (ts + ltrim) >= 0);
+		return std::string(ts + ltrim, te - ts - ltrim - rtrim);
+	}
+	
 	
 	
 	/**@brief Data type for a function matching the function signature of
