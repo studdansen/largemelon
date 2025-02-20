@@ -496,6 +496,26 @@ namespace largemelon {
 	
 	
 	/**@brief Collection of registers managed by a Ragel-generated scanner.*/
+	/**@brief Collection of registers managed by a Ragel-generated scanner.
+	 * @details To use this in the same C++ source file as a Ragel machine
+	 *   instantiation:
+	 * @code{.cpp}
+	 * largemelon::ragel_scanner_pers_type rp;
+	 * 
+	 * %% access rp.
+	 * %% variable p   rp.p
+	 * %% variable pe  rp.pe
+	 * %% variable eof rp.eof
+	 * %% write data;
+	 * 
+	 * // set up parser...
+	 * 
+	 * %% write init;
+	 * %% write exec;
+	 * 
+	 * // ...
+	 * @endcode
+	 * See the Ragel user manual for details.*/
 	struct ragel_scanner_pers_type {
 		/**@brief Pointer to first input character.*/
 		const char *p;
@@ -503,7 +523,7 @@ namespace largemelon {
 		const char *pe;
 		/**@brief Pointer to end of opened file, if applicable.*/
 		const char *eof;
-		/**@brief Register for current parsing state.*/
+		/**@brief Register for current internal parser state.*/
 		int cs;
 		/**@brief Register for most recent successful pattern match.*/
 		int act;
