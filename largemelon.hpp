@@ -153,6 +153,10 @@ namespace largemelon {
 		
 		loc.first_lno = prev_loc.last_lno;
 		loc.first_cno = prev_loc.last_cno + 1;
+			// what if this is past all characters on line?
+			// if it is, then the newline sequence is coming up and that
+			// erroneous extra column won't matter;
+			// write unit tests to confirm this
 		
 		// The number of lines spanned by the new location is equal to the
 		// number of newline character sequences in `mtext`.
