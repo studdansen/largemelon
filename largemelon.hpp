@@ -502,10 +502,10 @@ namespace largemelon {
 	 * @code{.cpp}
 	 * largemelon::ragel_scanner_pers_type rp;
 	 * 
-	 * %% access rp.
-	 * %% variable p   rp.p
-	 * %% variable pe  rp.pe
-	 * %% variable eof rp.eof
+	 * %% access rp.;
+	 * %% variable p   rp.p;
+	 * %% variable pe  rp.pe;
+	 * %% variable eof rp.eof;
 	 * %% write data;
 	 * 
 	 * // set up parser...
