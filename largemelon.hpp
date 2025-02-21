@@ -142,7 +142,8 @@ namespace largemelon {
 	 * @endcode
 	 * @dotfile mtext_loc_example_1.dot
 	 */
-	text_loc mtext_loc(const text_loc &prev_loc, const std::string &mtext) {
+	inline text_loc mtext_loc(const text_loc &prev_loc,
+		const std::string &mtext) {
 		
 		static const std::regex RGX_NL = std::regex(R"(\r\n|\r|\n)");
 		std::sregex_iterator nli, rend;
@@ -243,7 +244,7 @@ namespace largemelon {
 	 * @param os Text output stream.
 	 * @param token Lexer token.
 	 * @return @c os, with @c token serialized and appended.*/
-	std::ostream& operator<<(std::ostream& os, const lex_token& token) {
+	inline std::ostream& operator<<(std::ostream& os, const lex_token& token) {
 		os << "LEX_TOKEN(\"" << escstr(token.mtext) << "\",";
 		if (! token.fpath.empty())
 			os << "\"" << token.fpath.c_str() << "\",";
@@ -259,7 +260,7 @@ namespace largemelon {
 	 *     character at position just before @c te.
 	 * @warning @c ts and @c te cannot be null pointers (@c nullptr). Also, the
 	 *     result of <code>te - ts</code> must be zero or greater.*/
-	std::string toktext(const char *ts, const char *te) {
+	inline std::string toktext(const char *ts, const char *te) {
 		assert(ts != nullptr);
 		assert(te != nullptr);
 		assert((te - ts) >= 0);
@@ -279,8 +280,8 @@ namespace largemelon {
 	 * @warning @c ts and @c te cannot be null pointers (@c nullptr), and the
 	 *   result of <code>(te - rtrim) - (ts + ltrim)</code> must be zero or
 	 *   greater.*/
-	std::string toktext(const char *ts, const char *te, const size_t ltrim,
-		const size_t rtrim) {
+	inline std::string toktext(const char *ts, const char *te,
+		const size_t ltrim, const size_t rtrim) {
 		assert(ts != nullptr);
 		assert(te != nullptr);
 		assert((te - rtrim) - (ts + ltrim) >= 0);
@@ -345,7 +346,7 @@ namespace largemelon {
 	 * The values of @c ltrim and @c rtrim do not affect the resultant value of
 	 * @c loc, because those characters are still being consumed by the parsing
 	 * step.*/
-	void set_mtext_and_loc_trimmed(std::string& mtext, text_loc& loc,
+	inline void set_mtext_and_loc_trimmed(std::string& mtext, text_loc& loc,
 		const std::filesystem::path& fpath, const char *ts, const char *te,
 		const size_t& ltrim, const size_t& rtrim) {
 		LARGEMELON_UNUSED_PARAM(fpath);
@@ -382,7 +383,7 @@ namespace largemelon {
 	 * 
 	 * The values of @c mtext and @c loc are still set, so that parsing can
 	 * continue with the next-matched token.*/
-	void skip_token(std::string& mtext, text_loc& loc,
+	inline void skip_token(std::string& mtext, text_loc& loc,
 		const std::filesystem::path& fpath, const char *ts, const char *te,
 		const size_t& ltrim, const size_t& rtrim, const int& verbosity) {
 		LARGEMELON_UNUSED_PARAM(ltrim);
@@ -420,7 +421,7 @@ namespace largemelon {
 	 * @param rtrim Number of characters to trim from the end of the parsed
 	 *     text, starting from @c te.
 	 * @param verbosity Level of debug output.
-	 * 
+	 * @warning This dynamically allocates a new @ref lex_token instance.
 	 * @note Because @c pparser is just a <c>void *</c>, and because every
 	 *     parser implemented by Lemon is allocated as a <c>void *</c>, <em>any
 	 *     kind of Lemon-created parser can be used with this function</em>.
@@ -430,7 +431,7 @@ namespace largemelon {
 	 *     type that is passed to the @c parse_func call; this function can be
 	 *     reused as-is.*/
 	template <typename ContextType>
-	void parse_token_trimmed(std::string& mtext, text_loc& loc,
+	inline void parse_token_trimmed(std::string& mtext, text_loc& loc,
 		ContextType& context, const std::filesystem::path& fpath,
 		lemon_parse_func_type<ContextType> parse_func, const char *ts,
 		const char *te, void *const pparser, const size_t& token_id,
@@ -483,7 +484,7 @@ namespace largemelon {
 	 *     @c parse_token_trimmed() apply to this function with respect to the
 	 *     @c pparser argument.*/
 	template <typename ContextType>
-	void parse_null_token(std::string& mtext, text_loc& loc,
+	inline void parse_null_token(std::string& mtext, text_loc& loc,
 		ContextType& context, const std::filesystem::path& fpath,
 		lemon_parse_func_type<ContextType> parse_func, const char *ts,
 		const char *te, void *const pparser, const size_t& token_id,
