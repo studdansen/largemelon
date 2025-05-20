@@ -15,6 +15,7 @@ find_package(doctest REQUIRED)
 
 add_executable(test_largemelon "test/test_largemelon.cpp")
 target_include_directories(test_largemelon PRIVATE ${PROJECT_ROOT_DIR})
-set_target_properties(test_largemelon PROPERTIES COMPILE_DEFINITIONS
+target_link_libraries(test_largemelon PUBLIC doctest::doctest)
+target_compile_definitions(test_largemelon PUBLIC
 	DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN)
 add_test(NAME test_largemelon COMMAND test_largemelon)
