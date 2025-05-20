@@ -13,8 +13,10 @@
 #include <locale>
 #include <numeric>
 #include <regex>
+#include <set>
 #include <sstream>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 namespace largemelon {
@@ -25,7 +27,7 @@ namespace largemelon {
 	 * @param c Character.
 	 * @return String representing a character's "escaped" representation,
 	 *     including whitespace characters and other ANSI control codes.*/
-	inline constexpr std::string escchr(const char c) {
+	inline std::string escchr(const char c) {
 		switch (c) {
 			case '\n': return { '\\', 'n' };
 			case '\r': return { '\\', 'r' };
@@ -504,7 +506,172 @@ namespace largemelon {
 	
 	
 	
-	/**@brief Collection of registers managed by a Ragel-generated scanner.*/
+	template <typename AstEnumType>
+	class ast_base_type;
+	
+	/**@brief Base class for all types of AST nodes.
+	 * @tparam AstEnumType Data type for the enumerated AST node type. Must be
+	 *   an integral (e.g., int, char), or enumeration type (e.g., enum, enum
+	 *   class, enum struct).*/
+	template <typename AstEnumType>
+	class ast_base_type {
+		static_assert(std::is_enum<AstEnumType>::value
+			|| std::is_integral<AstEnumType>::value, "AstEnumType must be an "
+			"integral or enumeration type");
+		/**@brief Pointer to parent AST node.*/
+		ast_base_type<AstEnumType>* parent_;
+		/**@brief Pointers to child AST nodes.*/
+		std::set<ast_base_type<AstEnumType>*> childs_;
+		/**@brief Location in parsed source of text represented by this node.*/
+		text_loc loc_;
+	protected:
+		/**@brief Constructor.
+		 * @param loc Location of original text in parsed source.
+		 * @details This node is set as the root node of its AST and with no
+		 *   child nodes. This node's parent node is not set until this node is
+		 *   set as a child node of another node.*/
+		ast_base_type(const text_loc& loc) : parent_(this), childs_(),
+			loc_(loc) {
+			assert(parent_ != nullptr);
+		}
+		/**@brief Adds a node as a child of this node.
+		 * @param child Node to set as a child of this node.
+		 * @details The parent node of @c child becomes this node.*/
+		void add_child(ast_base_type<AstEnumType>* const child) {
+			child->parent_ = this;
+			childs_.insert(child);
+		}
+		/**@brief Tail case for @ref add_childs. Does nothing.*/
+		void add_childs() {}
+		/**@brief Helper function for merging several @ref add_child calls into
+		 *   a single call.
+		 * @tparam ArgTypes Data types for additional arguments. Will always be
+		 *   a parameter pack of <ref>ast_type_base* const</ref>.
+		 * @param child Node set as child of this node.
+		 * @param childs Other child nodes.*/
+		template <typename... ChildTypes>
+		void add_childs(ast_base_type<AstEnumType>* const child,
+			ChildTypes... childs) {
+			add_child(child);
+			add_childs(childs...);
+		}
+	public:
+		/**@brief Enumerated value associated with AST nodes of this type.
+		 * @details This is defined by every class derived from @ref ast_base.
+		 *   Each derived type of AST node has an associated enumerated value.
+		 *   This way, the AST node can be passed around as an @ref ast_base
+		 *   pointer and then be <ref>dynamic_cast</ref>-ed back to the class
+		 *   type associated with its enumerated type.*/
+		virtual constexpr AstEnumType type() const = 0;
+		/**@brief Parent AST node.
+		 * @note If <tt>this == this->parent()</tt>, then this is the root
+		 *   node of its AST.*/
+		ast_base_type<AstEnumType>* parent() const {
+			assert(parent_ != nullptr);
+			return parent_;
+		}
+		/**@brief Whether this node is the root node of its AST.
+		 * @return @c true if <tt>this == parent()</tt>, @c false otherwise.*/
+		bool is_root() const { return this == parent(); }
+		/**@brief Root node of this AST, for which there is no parent node.*/
+		const ast_base_type<AstEnumType>* root() const {
+			const ast_base_type<AstEnumType>* n = this;
+			do {
+				assert(n != nullptr);
+				if (n->is_root()) {
+					break;
+				}
+				n = n->parent();
+			} while (true);
+			assert(n != nullptr);
+			return n;
+		}
+		/**@brief Child AST nodes.*/
+		std::set<ast_base_type<AstEnumType>*> childs() const {
+			return childs_;
+		}
+		/**@brief Location of original text in parsed source.*/
+		text_loc loc() const { return loc_; }
+	};
+	
+	
+	
+	/**@brief Extends @c ast_base_type to associate it with an enumerated AST
+	 *   node type and implement the @ref ast_base::type method.
+	 * @tparam AstEnumType Data type for enumerated AST node type.
+	 * @tparam N Enumerated value for AST node type.
+	 * @details All other AST node types are derived from this template
+	 *   class.*/
+	template <typename AstEnumType, AstEnumType N>
+	class ast_typed_base_type : public ast_base_type<AstEnumType> {
+	protected:
+		/**@brief Constructor.
+		 * @param loc Location of original text in parsed source.*/
+		ast_typed_base_type(const text_loc& loc)
+			: ast_base_type<AstEnumType>(loc) {}
+	public:
+		/**@brief Enumerated AST node type.*/
+		constexpr AstEnumType type() const override { return N; }
+	};
+	
+	
+	
+	static_assert(std::is_base_of< ast_base_type<int>,
+		ast_typed_base_type<int, 1> >::value, "expected template class "
+		"ast_base_type<int> to be base class of derived template class "
+		"ast_typed_base_type<int,1>");
+	static_assert(!std::is_same< ast_base_type<int>,
+		ast_typed_base_type<int, 1> >::value, "expected template class "
+		"ast_base_type<int> to not be same as derived template class "
+		"ast_typed_base_type<int,1>");
+	
+	
+	
+	/**@brief Base trait type for indicating whether a class is either:
+	 *   1) a base AST node type for a given enumerated AST node type; or
+	 *   2) one of that class' derived types.
+	 * @tparam AstEnumType Enumerated AST node type.
+	 * @tparam ClassType Class being interrogated.
+	 * 
+	 * To specialize this for an application with a particular enumerated AST
+	 * node type:
+	 * @code{.cpp}
+	 * enum class nt {
+	 *   ROOT = 1,
+	 *   BOOL_LITERAL,
+	 *   CONST_DECL,
+	 * };
+	 * template <typename ClassType>
+	 * constexpr bool is_ast_node_class() const {
+	 *   return is_ast_node_class_type<nt, ClassType>::value;
+	 * }
+	 * @endcode*/
+	template <typename AstEnumType, typename ClassType>
+	struct is_ast_node_class_type : public std::integral_constant<bool,
+		std::is_base_of<ast_base_type<AstEnumType>, ClassType>::value
+	> {};
+	
+	/**@brief Base trait type for indicating whether a class is derived from a
+	 *   base AST node type for a given enumerated AST node type.
+	 * @tparam AstEnumType Enumerated AST node type.
+	 * @tparam ClassType Class being interrogated.
+	 * 
+	 * To specialize this for an application with an enumerated AST node type
+	 * @c nt:
+	 * @code{.cpp}
+	 * template <typename ClassType>
+	 * constexpr bool is_ast_node_subclass() const {
+	 *   return is_ast_node_subclass_type<nt, ClassType>::value;
+	 * }
+	 * @endcode*/
+	template <typename AstEnumType, typename ClassType>
+	struct is_ast_node_subclass_type : public std::integral_constant<bool,
+		is_ast_node_class_type<AstEnumType, ClassType>::value
+		&& (!std::is_same<ast_base_type<AstEnumType>, ClassType>::value)
+	> {};
+	
+	
+	
 	/**@brief Collection of registers managed by a Ragel-generated scanner.
 	 * @details To use this in the same C++ source file as a Ragel machine
 	 *   instantiation:
