@@ -6,6 +6,9 @@ generator and the [Lemon](https://sqlite.org/src/doc/trunk/doc/lemon.html)
 LALR(1) parser generator.
 It is implemented with nothing more than the standard C and C++ libraries.
 
+This repo also provides package modules for locating and/or building the Ragel
+and Lemon software tools, for which [largemelon.hpp](largemelon.hpp) provides a bridge.
+
 
 ## To Do
 
