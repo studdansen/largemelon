@@ -16,70 +16,71 @@
 
 
 
-/**@test An empty string has no characters to escape.*/
-TEST_CASE("empty string with escaped characters") {
-	std::string s = largemelon::escstr("");
-	CHECK(s == "");
-}
-
-/**@test If a string has no characters to escape, then the string is not
- *     changed at all.*/
-TEST_CASE("string with non-escaped characters") {
-	std::string s_orig = "the wheels on the bus";
-	std::string s_new = largemelon::escstr(s_orig);
-	CHECK(s_new == s_orig);
-}
-
-/**@test The @c escstr function escapes the @c '\\n' character.*/
-TEST_CASE("string with escaped whitespace characters") {
-	std::string s = largemelon::escstr("Median\nNarrative");
-	CHECK(s == R"(Median\nNarrative)");
-}
-
-
-
-/**@test A location in text is considered "less than" another location if
- *     both of the boundaries of the first location come before the
- *     boundaries of the second location.*/
-TEST_CASE("text span is 'less-than' another if it completely precedes "
-	"it") {
-	const largemelon::text_loc before = { 1, 1, 1, 8 };
-	const largemelon::text_loc after = { 2, 5, 2, 18 };
-	CHECK(before < after);
-	CHECK(!( after < before));
-}
-
-/**@test It's unexpected during normal use that a parsed text span would
- *     both start after another one's start and end after that same one's
- *     end. If two @c text_loc instances are partially entwined, then the
- *     'less-than' comparison returns @c false regardless of the order.*/
-TEST_CASE("text locations is not 'less than' another if they're "
-	"entwined") {
-	const largemelon::text_loc first = { 5, 9, 5, 18 };
-	const largemelon::text_loc second = { 5, 11, 5, 24 };
-	CHECK(first != second);
-	CHECK( !(first < second) );
-	CHECK( !(second < first) );
-}
-
-
-
-/**@test */
-TEST_CASE("toktext on a Contrapoints phrase") {
-	const std::string text = "no emotions in this video";
-	std::string sample = largemelon::toktext(text.c_str(), text.c_str() + 11);
-	CHECK(sample == "no emotions");
-	sample = largemelon::toktext(text.c_str() + 3, text.c_str() + 11);
-	CHECK(sample == "emotions");
-}
-
-
-
 /**@namespace largemelon::test
  * @brief Namespace defining test-only, non-production code for
  *   @c largemelon.*/
 
 namespace largemelon::test {
+	
+	
+	
+	/**@test An empty string has no characters to escape.*/
+	TEST_CASE("empty string with escaped characters") {
+		std::string s = largemelon::escstr("");
+		CHECK(s == "");
+	}
+	
+	/**@test If a string has no characters to escape, then the string is not
+	 *     changed at all.*/
+	TEST_CASE("string with non-escaped characters") {
+		std::string s_orig = "the wheels on the bus";
+		std::string s_new = largemelon::escstr(s_orig);
+		CHECK(s_new == s_orig);
+	}
+	
+	/**@test The @c escstr function escapes the @c '\\n' character.*/
+	TEST_CASE("string with escaped whitespace characters") {
+		std::string s = largemelon::escstr("Median\nNarrative");
+		CHECK(s == R"(Median\nNarrative)");
+	}
+	
+	
+	
+	/**@test A location in text is considered "less than" another location if
+	 *     both of the boundaries of the first location come before the
+	 *     boundaries of the second location.*/
+	TEST_CASE("text span is 'less-than' another if it completely precedes "
+		"it") {
+		const largemelon::text_loc before = { 1, 1, 1, 8 };
+		const largemelon::text_loc after = { 2, 5, 2, 18 };
+		CHECK(before < after);
+		CHECK(!( after < before));
+	}
+	
+	/**@test It's unexpected during normal use that a parsed text span would
+	 *     both start after another one's start and end after that same one's
+	 *     end. If two @c text_loc instances are partially entwined, then the
+	 *     'less-than' comparison returns @c false regardless of the order.*/
+	TEST_CASE("text locations is not 'less than' another if they're "
+		"entwined") {
+		const largemelon::text_loc first = { 5, 9, 5, 18 };
+		const largemelon::text_loc second = { 5, 11, 5, 24 };
+		CHECK(first != second);
+		CHECK( !(first < second) );
+		CHECK( !(second < first) );
+	}
+	
+	
+	
+	/**@test */
+	TEST_CASE("toktext on a Contrapoints phrase") {
+		const std::string text = "no emotions in this video";
+		std::string sample = largemelon::toktext(text.c_str(),
+			text.c_str() + 11);
+		CHECK(sample == "no emotions");
+		sample = largemelon::toktext(text.c_str() + 3, text.c_str() + 11);
+		CHECK(sample == "emotions");
+	}
 	
 	
 	
@@ -197,43 +198,44 @@ namespace largemelon::test {
 	
 	
 	
+	/**@test If an AST node has no parent node, then it is the root of its
+	 *   AST.*/
+	TEST_CASE("Boolean literal with no parent node") {
+		using namespace largemelon::test;
+		ast_bool_literal node({1,0,1,3}, true);
+		CHECK_EQ(node.type(), nt::BOOL_LITERAL);
+		CHECK_EQ(node.value(), true);
+		CHECK_EQ(node.parent(), &node);
+		CHECK(node.is_root());
+	}
+	
+	/**@test */
+	TEST_CASE("binary addition operator") {
+		using namespace largemelon::test;
+		auto lexpr = new ast_bool_literal({1,0,1,3}, true);
+		auto rexpr = new ast_bool_literal({1,8,1,12}, false);
+		auto binop = new ast_binop_logor({1,0,1,12}, lexpr, rexpr);
+		CHECK_EQ(binop->is_root(), true);
+		CHECK_EQ(binop->lexpr()->is_root(), false);
+		CHECK_EQ(binop->rexpr()->is_root(), false);
+		delete binop;
+	}
+	
+	/**@test */
+	TEST_CASE("data declaration root with expression sub-node") {
+		using namespace largemelon::test;
+		auto expr = new ast_bool_literal({0,0,0,0}, false);
+		auto decl = new ast_data_decl({0,0,0,0}, "unifying_force", expr);
+		CHECK_EQ(decl->is_root(), true);
+		CHECK_EQ(decl->expr(), expr);
+		CHECK_NE(decl->expr()->parent(), decl->expr());
+		CHECK_EQ(expr->is_root(), false);
+		CHECK_EQ(decl->expr()->parent(), decl);
+		CHECK_EQ(decl->childs().count(decl->expr()), 1);
+		CHECK_EQ(decl->childs().count(expr), 1);
+		delete decl;
+	}
+	
+	
+	
 } // namespace largemelon::test
-
-
-
-/**@test If an AST node has no parent node, then it is the root of its AST.*/
-TEST_CASE("Boolean literal with no parent node") {
-	using namespace largemelon::test;
-	ast_bool_literal node({1,0,1,3}, true);
-	CHECK_EQ(node.type(), nt::BOOL_LITERAL);
-	CHECK_EQ(node.value(), true);
-	CHECK_EQ(node.parent(), &node);
-	CHECK(node.is_root());
-}
-
-/**@test */
-TEST_CASE("binary addition operator") {
-	using namespace largemelon::test;
-	auto lexpr = new ast_bool_literal({1,0,1,3}, true);
-	auto rexpr = new ast_bool_literal({1,8,1,12}, false);
-	auto binop = new ast_binop_logor({1,0,1,12}, lexpr, rexpr);
-	CHECK_EQ(binop->is_root(), true);
-	CHECK_EQ(binop->lexpr()->is_root(), false);
-	CHECK_EQ(binop->rexpr()->is_root(), false);
-	delete binop;
-}
-
-/**@test */
-TEST_CASE("data declaration root with expression sub-node") {
-	using namespace largemelon::test;
-	auto expr = new ast_bool_literal({0,0,0,0}, false);
-	auto decl = new ast_data_decl({0,0,0,0}, "unifying_force", expr);
-	CHECK_EQ(decl->is_root(), true);
-	CHECK_EQ(decl->expr(), expr);
-	CHECK_NE(decl->expr()->parent(), decl->expr());
-	CHECK_EQ(expr->is_root(), false);
-	CHECK_EQ(decl->expr()->parent(), decl);
-	CHECK_EQ(decl->childs().count(decl->expr()), 1);
-	CHECK_EQ(decl->childs().count(expr), 1);
-	delete decl;
-}
