@@ -12,7 +12,10 @@
 #include <doctest/doctest.h>
 #include "../largemelon.hpp"
 #include <memory> // std::unique_ptr
+#include <string>
 #include <string_view>
+#include <typeindex>
+#include <typeinfo>
 
 
 
@@ -23,6 +26,16 @@
 namespace largemelon::test {
 	
 	
+	
+	/**@test The @c std::malloc function fits the function signature
+	 *   represented by @ref malloc_func_type.*/
+	TEST_CASE("malloc_type matches std::malloc") {
+		std::type_index type_idx = typeid(*malloc_func_type());
+		std::type_index func_idx = typeid(std::malloc);
+		MESSAGE("typeid(*malloc_func_type()): ", type_idx.name());
+		MESSAGE("typeid(std::malloc):         ", func_idx.name());
+		CHECK_EQ(type_idx, func_idx);
+	}
 	
 	/**@test An empty string has no characters to escape.*/
 	TEST_CASE("empty string with escaped characters") {

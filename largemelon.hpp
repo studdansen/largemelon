@@ -10,7 +10,6 @@
 #include <functional>
 #include <filesystem>
 #include <iostream>
-#include <locale>
 #include <numeric>
 #include <regex>
 #include <set>
@@ -102,7 +101,7 @@ namespace largemelon {
 	}
 	
 	/**@brief Serializes a @c text_loc instance to an output stream.*/
-	std::ostream &operator <<(std::ostream &os, const text_loc &loc) {
+	inline std::ostream &operator <<(std::ostream &os, const text_loc &loc) {
 		if (loc.first_lno == loc.last_lno) {
 			os << loc.first_lno << ":" << loc.first_cno;
 			if (loc.first_cno != loc.last_cno) {
@@ -534,21 +533,25 @@ namespace largemelon {
 			loc_(loc) {
 			assert(parent_ != nullptr);
 		}
-		/**@brief Adds a node as a child of this node.
+		/**@brief Assigns an existing AST node as a child of this node, and
+		 *   sets this node as the parent of that node.
 		 * @param child Node to set as a child of this node.
-		 * @details The parent node of @c child becomes this node.*/
+		 * @details The parent node of @c child becomes this node.
+		 * @warning @c child cannot be @c nullptr.*/
 		void add_child(ast_base_type<AstEnumType>* const child) {
 			child->parent_ = this;
 			childs_.insert(child);
 		}
 		/**@brief Tail case for @ref add_childs. Does nothing.*/
 		void add_childs() {}
-		/**@brief Helper function for merging several @ref add_child calls into
-		 *   a single call.
-		 * @tparam ArgTypes Data types for additional arguments. Will always be
-		 *   a parameter pack of <ref>ast_type_base* const</ref>.
-		 * @param child Node set as child of this node.
-		 * @param childs Other child nodes.*/
+		/**@brief Assigns multiple AST nodes as children of this node, and sets
+		 *   this node as the parent of those nodes.
+		 * @tparam ChildTypes Data types for @c childs. (They will always be
+		 *   a parameter pack of <ref>ast_type_base* const</ref>.)
+		 * @param child First child node.
+		 * @param childs Next child nodes.
+		 * @warning @c child cannot be @c nullptr. None of the elements of
+		 *   @c childs can contain @c nullptr.*/
 		template <typename... ChildTypes>
 		void add_childs(ast_base_type<AstEnumType>* const child,
 			ChildTypes... childs) {

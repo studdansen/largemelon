@@ -1,0 +1,18 @@
+graph mtext_loc_example_1 {
+	node [shape=none style=filled fillcolor=white color=black
+		fontname=Courier];
+	TEXT [label=<<TABLE CELLSPACING="0" BORDER="0" CELLBORDER="1">
+		<TR><TD SIDES="R"></TD>
+			<TD COLSPAN="3" SIDES="B" ALIGN="LEFT">Everything is creepy and </TD>
+			<TD SIDES="B" BGCOLOR="#dfdfdf">dark</TD>
+			<TD SIDES="B"> and dirty.</TD>
+		</TR>
+		<TR><TD SIDES="R">0</TD>
+			<TD SIDES="LT" ALIGN="LEFT">1</TD>
+			<TD SIDES="T" ALIGN="CENTER">prev_loc</TD>
+			<TD SIDES="RT" ALIGN="RIGHT">25</TD>
+			<TD SIDES="LTR" BGCOLOR="#dfdfdf"> </TD>
+			<TD SIDES="LT"></TD>
+		</TR>
+	</TABLE>>];
+}
