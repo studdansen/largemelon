@@ -669,7 +669,7 @@ namespace largemelon {
 	 * @endcode*/
 	template <typename AstEnumType, typename ClassType>
 	struct is_ast_node_subclass_type : public std::integral_constant<bool,
-		is_ast_node_class_type<AstEnumType, ClassType>::value
+		std::is_base_of<ast_base_type<AstEnumType>, ClassType>::value
 		&& (!std::is_same<ast_base_type<AstEnumType>, ClassType>::value)
 	> {};
 	
