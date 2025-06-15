@@ -142,6 +142,10 @@ namespace largemelon::test {
 		bool value() const { return value_; }
 	};
 	
+	static_assert(
+		largemelon::is_ast_node_class_type<nt, ast_bool_literal>::value,
+		"expected ast_bool_literal to be an AST node class");
+	
 	class ast_binop_logor : public ast_typed_base<nt::BINOP_LOGOR> {
 		/**@brief Left-hand expression.*/
 		std::unique_ptr<ast_base> lexpr_;
