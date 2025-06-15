@@ -206,9 +206,9 @@ function(lemon_parser_generate)
 		# get `<path>` from key/value pair and append `-T<path>`
 	endif()
 	list(APPEND cmdline_args ${input_file_} ${output_file_})
-	add_custom_command(
+	#~ add_custom_command(
 		
-	)
+	#~ )
 	
 endfunction()
 
