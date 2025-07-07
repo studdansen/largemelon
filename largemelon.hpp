@@ -600,7 +600,7 @@ namespace largemelon {
 	
 	
 	/**@brief Extends @c ast_base_type to associate it with an enumerated AST
-	 *   node type and implement the @ref ast_base::type method.
+	 *   node type and implement the @ref ast_base_type::type method.
 	 * @tparam AstEnumType Data type for enumerated AST node type.
 	 * @tparam N Enumerated value for AST node type.
 	 * @details All other AST node types are derived from this template
