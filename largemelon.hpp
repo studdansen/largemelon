@@ -547,7 +547,7 @@ namespace largemelon {
 		/**@brief Assigns multiple AST nodes as children of this node, and sets
 		 *   this node as the parent of those nodes.
 		 * @tparam ChildTypes Data types for @c childs. (They will always be
-		 *   a parameter pack of <ref>ast_type_base* const</ref>.)
+		 *   a parameter pack of @ref ast_base_type* @c const.)
 		 * @param child First child node.
 		 * @param childs Next child nodes.
 		 * @warning @c child cannot be @c nullptr. None of the elements of
@@ -560,11 +560,12 @@ namespace largemelon {
 		}
 	public:
 		/**@brief Enumerated value associated with AST nodes of this type.
-		 * @details This is defined by every class derived from @ref ast_base.
-		 *   Each derived type of AST node has an associated enumerated value.
-		 *   This way, the AST node can be passed around as an @ref ast_base
-		 *   pointer and then be <ref>dynamic_cast</ref>-ed back to the class
-		 *   type associated with its enumerated type.*/
+		 * @details This is defined by every class derived from
+		 *   @ref ast_base_type. Each derived type of AST node has an
+		 *   associated enumerated value. This way, the AST node can be passed
+		 *   around as an @ref ast_base_type pointer and then be
+		 *   <tt>dynamic_cast</tt>-ed back to the class type associated with
+		 *   its enumerated type.*/
 		virtual constexpr AstEnumType type() const = 0;
 		/**@brief Parent AST node.
 		 * @note If <tt>this == this->parent()</tt>, then this is the root
