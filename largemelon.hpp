@@ -231,7 +231,7 @@ namespace largemelon {
 		text_loc loc;
 		/**@brief Default constructor.
 		 * @details @c mtext and @c fpath are set to zero-length values, and
-		 *   @c loc is set to @ref FIRST_TEXT_LOC.*/
+		 *   @c loc is set to @ref largemelon::FIRST_TEXT_LOC.*/
 		lex_token() : mtext(), fpath(), loc(FIRST_TEXT_LOC) {}
 		/**@brief Constructor.
 		 * @param mtext Text matched and pushed to the parser.
