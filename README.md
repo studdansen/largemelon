@@ -15,3 +15,6 @@ bridge.
 
 Integrate Doctest into the GitHub Actions if at all possible. Enforce live
 unit tests and/or integration tests.
+
+Port this to pure C. Lemon and Ragel output C, not strictly C++.
+This would (potentially vastly) increase its applicability.
