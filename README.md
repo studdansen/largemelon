@@ -10,6 +10,8 @@ This repo also provides package modules for locating and/or building the Ragel
 and Lemon software tools, for which [largemelon.hpp](largemelon.hpp) provides a
 bridge.
 
+This may mature into a framework. For now, it is a collection of helper data
+types, functions, and classes that can be reused between parsers.
 
 ## To Do
 

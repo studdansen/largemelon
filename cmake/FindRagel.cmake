@@ -6,23 +6,24 @@ This module locates or, if necessary, builds the Ragel scanner generator.
 
 The following variables are defined:
 
-``Ragel_EXECUTABLE``
-  Path to Ragel executable.
-``Ragel_FOUND``
-  Whether the Ragel executable was found.
+.. variable:: Ragel_FOUND
+   
+   Whether the Ragel executable was found.
+
+.. variable:: Ragel_EXECUTABLE
+   
+   Path to Ragel executable.
 
 #]======================================================================]
 
 include(FetchContent)
 
 #[======================================================================[.rst:
-ragel_scanner_find_and_build
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Finds the installed Ragel executable. If it cannot be found, then its sources
-are downloaded, configured, and built.
-#}======================================================================]
-
+.. command:: ragel_scanner_find_and_build
+   
+   Finds the installed Ragel executable. If it cannot be found, then its
+   sources are downloaded, configured, and built.
+#]======================================================================]
 function(ragel_scanner_find_and_build)
 	
 	set(Ragel_FOUND NO PARENT_SCOPE)
@@ -34,7 +35,7 @@ function(ragel_scanner_find_and_build)
 	
 endfunction()
 
-#{======================================================================[.rst:
+#[======================================================================[.rst:
 ragel_scanner_generate
 ^^^^^^^^^^^^^^^^^^^^^^
 

@@ -8,10 +8,13 @@ Lemon is part of the SQLite project, but it is not found by running
 
 The following variables are defined:
 
-``LemonParser_EXECUTABLE``
-  Path to Lemon executable.
-``LemonParser_FOUND``
-  Whether the Lemon executable was found.
+.. LemonParser_FOUND
+   
+   Whether the Lemon executable was found.
+
+.. variable:: LemonParser_EXECUTABLE
+   
+   Path to Lemon executable.
 
 #]======================================================================]
 
@@ -27,7 +30,6 @@ include(FetchContent)
    
    This is the version number as returned by the ``lemon -x``.
 #}======================================================================]
-
 function(lemon_parser_find_and_build)
 	#cmake_parse_arguments(PARSE_ARGV 0 lemon_parser_
 	#  <options> <one_value_keywords> <multi_value_keywords>)
