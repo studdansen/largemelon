@@ -16,6 +16,7 @@
 #include <string_view>
 #include <typeindex>
 #include <typeinfo>
+#include <vector>
 
 
 
@@ -55,6 +56,56 @@ namespace largemelon::test {
 	TEST_CASE("string with escaped whitespace characters") {
 		std::string s = largemelon::escstr("Median\nNarrative");
 		CHECK(s == R"(Median\nNarrative)");
+	}
+	
+	/**@test */
+	TEST_CASE("same current indent does not change block indents") {
+		int indent_change, rc;
+		std::vector<size_t> indents = {4, 4};
+		rc = largemelon::update_block_indents(indent_change, indents, 8);
+		CHECK(rc == 0);
+		CHECK(indents.size() == 2);
+		CHECK(indent_change == 0);
+	}
+
+	/**@test */
+	TEST_CASE("no current indent clears block indents") {
+		int indent_change, rc;
+		std::vector<size_t> indents = {2, 6, 4};
+		rc = largemelon::update_block_indents(indent_change, indents, 0);
+		CHECK(rc == 0);
+		CHECK(indents.empty());
+		CHECK(indent_change == -3);
+	}
+
+	/**@test */
+	TEST_CASE("larger current indent extends block indents") {
+		int indent_change, rc;
+		std::vector<size_t> indents = {2, 2, 2, 2};
+		rc = largemelon::update_block_indents(indent_change, indents, 12);
+		CHECK(rc == 0);
+		CHECK(indents.size() == 5);
+		CHECK(indents.back() == 4);
+		CHECK(indent_change == 1);
+	}
+
+	/**@test */
+	TEST_CASE("smaller non-aligned current indent causes error") {
+		int indent_change, rc;
+		std::vector<size_t> indents = {4, 4, 4};
+		rc = largemelon::update_block_indents(indent_change, indents, 10);
+		CHECK(rc != 0);
+		// TODO: indicate specifically that it's a bad indent
+	}
+
+	/**@test */
+	TEST_CASE("smaller aligned current indent trims block indents") {
+		int indent_change, rc;
+		std::vector<size_t> indents = {4, 4, 4};
+		rc = largemelon::update_block_indents(indent_change, indents, 4);
+		CHECK(rc == 0);
+		CHECK(indents.size() == 1);
+		CHECK(indent_change == -2);
 	}
 	
 	

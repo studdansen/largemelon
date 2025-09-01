@@ -507,6 +507,109 @@ namespace largemelon {
 	
 	
 	
+	/**@brief Updates a tracker of code block indents, as might be used in a
+	 *   language where indentation produces code structure (such as in
+	 *   Python).
+	 * @param indent_change Number of block indent levels by which the
+	 *   statement indented by @c curr_width columns differs from the previous
+	 *   statement.
+	 * @param prev_widths Previous relative block indents.
+	 * @param curr_width Number of columns occupied by the current line's
+	 *   absolute indent.
+	 * @param verbosity Level of debug verbosity.
+	 * @return @c 0 on success, nonzero otherwise.
+	 * 
+	 * Each element of @c prev_widths represents the number of columns occupied
+	 * by each prior code block's indent.
+	 * 
+	 * @warning This function's behavior may be undefined if there are elements
+	 *   of @c prev_widths with value @c 0.*/
+	int update_block_indents(int& indent_change,
+		std::vector<size_t>& prev_widths, const size_t curr_width,
+		const int verbosity = 0) {
+		size_t total_prev_width;
+		total_prev_width = std::accumulate(prev_widths.begin(),
+			prev_widths.end(), 0);
+		
+		if (verbosity >= 2) {
+			std::cout << std::endl
+				<< "update_block_indents:" << std::endl
+				<< "  previous indents are [ ";
+			for (auto &w: prev_widths)
+				std::cout << w << " ";
+			std::cout << "] (" << total_prev_width << " total)" << std::endl
+				<< "  current indent is " << curr_width << std::endl;
+		}
+		
+		if (curr_width == 0) {
+			if (verbosity >= 2) {
+				std::cout << "  current indent reduces " << prev_widths.size()
+					<< " level(s)" << std::endl;
+			}
+			indent_change = -prev_widths.size();
+			prev_widths.clear();
+		}
+		
+		// If the current total indent is greater than the previous absolute
+		// indent, then add a new relative indent to make up the difference.
+		else if (curr_width > total_prev_width) {
+			prev_widths.push_back(curr_width - total_prev_width);
+			indent_change = 1;
+			if (verbosity >= 2) {
+				std::cout << "  current indent adds block indent of "
+					<< prev_widths.back() << std::endl;
+			}
+		}
+		
+		// If the current total indent is less than the previous absolute indent.
+		// It must then match the sum of a sub-range of the relative indents,
+		// starting from the first relative indent.
+		else if (curr_width < total_prev_width) {
+			assert(0 < curr_width);
+			auto rit = prev_widths.rbegin();
+			for (; rit!=prev_widths.rend(); rit++) {
+				total_prev_width -= (*rit);
+				assert(total_prev_width
+					== (size_t)std::accumulate(rit + 1, prev_widths.rend(), 0));
+				if (total_prev_width == curr_width)
+					break;
+				else if (total_prev_width < curr_width) {
+					if (verbosity >= 2) {
+						std::cout << "  current indent doesn't align with any "
+							<< "previous indentation levels" << std::endl;
+					}
+					return 1;
+				}
+			}
+			indent_change = -std::distance(prev_widths.rbegin(), rit + 1);
+			prev_widths.resize(prev_widths.size() + indent_change);
+			if (verbosity >= 2) {
+				std::cout << "  current indent reduces " << (-indent_change)
+					<< " level(s) to [ ";
+				for (auto &w: prev_widths)
+					std::cout << w << " ";
+				std::cout << "]" << std::endl;
+			}
+		}
+		
+		// Otherwise, the current total indent is equal to the previous
+		// absolute indent, so do nothing.
+		else {
+			assert(curr_width == total_prev_width);
+			indent_change = 0;
+			if (verbosity >= 2) {
+				std::cout << "  current indent is same as previous indent"
+					<< std::endl;
+			}
+		}
+		
+		assert((size_t)std::accumulate(prev_widths.begin(), prev_widths.end(),
+			0) == curr_width);
+		return 0;
+	}
+	
+	
+	
 	template <typename AstEnumType>
 	class ast_base_type;
 	
