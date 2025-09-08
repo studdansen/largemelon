@@ -196,16 +196,53 @@ namespace largemelon {
 	
 	
 	
+	//~ /**@brief Location spanning and including two text locations.
+	 //~ * @param first_loc  Location of first character in text span.
+	 //~ * @param last_loc   Location of last character in text span.
+	 //~ * @return Location value equal to @c first_loc.first_lno,
+	 //~ *     @c first_loc.first_cno, @c last_loc.last_lno, and
+	 //~ *     @c last_loc.last_cno.*/
+	//~ inline constexpr text_loc span_loc(const text_loc &first_loc,
+		//~ const text_loc &last_loc) {
+		//~ return { first_loc.first_lno, first_loc.first_cno,
+			//~ last_loc.last_lno, last_loc.last_cno };
+	//~ }
+	
+	
+	
 	/**@brief Location spanning and including two text locations.
-	 * @param first_loc  Location of first character in text span.
-	 * @param last_loc   Location of last character in text span.
-	 * @return Location value equal to @c first_loc.first_lno,
-	 *     @c first_loc.first_cno, @c last_loc.last_lno, and
-	 *     @c last_loc.last_cno.*/
-	inline constexpr text_loc span_loc(const text_loc &first_loc,
-		const text_loc &last_loc) {
-		return { first_loc.first_lno, first_loc.first_cno,
-			last_loc.last_lno, last_loc.last_cno };
+	 * @param p Location of first character in text span.
+	 * @param q Location of last character in text span.
+	 * @warning This expects, for both @c p and for @c q, the first line and
+	 *   column to come at or before the last line and column.*/
+	inline text_loc span_loc(const text_loc &p, const text_loc &q) {
+		text_loc loc;
+		loc.first_lno = std::min(p.first_lno, q.first_lno);
+		loc.last_lno = std::max(p.last_lno, q.last_lno);
+		
+		if (p.first_lno < q.first_lno) {
+			loc.first_cno = p.first_cno;
+		}
+		else if (p.first_lno > q.first_lno) {
+			loc.first_cno = q.first_cno;
+		}
+		else {
+			assert(p.first_lno == q.first_lno);
+			loc.first_cno = std::min(p.first_cno, q.first_cno);
+		}
+		
+		if (p.last_lno < q.last_lno) {
+			loc.last_cno = q.last_cno;
+		}
+		else if (p.last_lno > q.last_lno) {
+			loc.last_cno = p.last_cno;
+		}
+		else {
+			assert(p.last_lno == q.last_lno);
+			loc.last_cno = std::max(p.last_cno, q.last_cno);
+		}
+		
+		return loc;
 	}
 	
 	

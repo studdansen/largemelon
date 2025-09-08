@@ -35,6 +35,7 @@ namespace largemelon::test {
 		std::type_index func_idx = typeid(std::malloc);
 		MESSAGE("typeid(*malloc_func_type()): ", type_idx.name());
 		MESSAGE("typeid(std::malloc):         ", func_idx.name());
+		// following line fails on Windows, for some reason
 		CHECK_EQ(type_idx, func_idx);
 	}
 	
