@@ -11,12 +11,24 @@
 
 #include <doctest/doctest.h>
 #include "../largemelon.hpp"
+#include <cstdlib> // std::malloc
 #include <memory> // std::unique_ptr
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <typeindex>
 #include <typeinfo>
 #include <vector>
+
+
+
+/**@def IS_WINDOWS_HOST
+ * @brief Whether the target environment is a Windows operating system.*/
+#if defined(_WIN32)
+#	define IS_WINDOWS_HOST 1
+#else
+#	define IS_WINDOWS_HOST 0
+#endif
 
 
 
@@ -29,14 +41,23 @@ namespace largemelon::test {
 	
 	
 	/**@test The @c std::malloc function fits the function signature
-	 *   represented by @ref malloc_func_type.*/
-	TEST_CASE("malloc_type matches std::malloc") {
+	 *   represented by @ref largemelon::malloc_func_type.*/
+	TEST_CASE("malloc_func_type matches std::malloc") {
 		std::type_index type_idx = typeid(*malloc_func_type());
 		std::type_index func_idx = typeid(std::malloc);
 		MESSAGE("typeid(*malloc_func_type()): ", type_idx.name());
 		MESSAGE("typeid(std::malloc):         ", func_idx.name());
 		// following line fails on Windows, for some reason
 		CHECK_EQ(type_idx, func_idx);
+	}
+	
+	/**@test The @c std::malloc function must be assignable to an instance with
+	 *   type @ref largemelon::malloc_func_type, regardless of the target
+	 *   platform. (This might fail on Windows.)*/
+	TEST_CASE("std::malloc assignable to malloc_func_type on Windows") {
+		malloc_func_type func;
+		func = std::malloc;
+		CHECK_EQ(func, std::malloc);
 	}
 	
 	/**@test An empty string has no characters to escape.*/
