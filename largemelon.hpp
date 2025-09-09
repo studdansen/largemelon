@@ -220,26 +220,26 @@ namespace largemelon {
 		loc.first_lno = std::min(p.first_lno, q.first_lno);
 		loc.last_lno = std::max(p.last_lno, q.last_lno);
 		
-		if (p.first_lno < q.first_lno) {
-			loc.first_cno = p.first_cno;
-		}
-		else if (p.first_lno > q.first_lno) {
-			loc.first_cno = q.first_cno;
-		}
-		else {
-			assert(p.first_lno == q.first_lno);
+		if (p.first_lno == q.first_lno) {
 			loc.first_cno = std::min(p.first_cno, q.first_cno);
 		}
-		
-		if (p.last_lno < q.last_lno) {
-			loc.last_cno = q.last_cno;
-		}
-		else if (p.last_lno > q.last_lno) {
-			loc.last_cno = p.last_cno;
+		else if (p.first_lno < q.first_lno) {
+			loc.first_cno = p.first_cno;
 		}
 		else {
-			assert(p.last_lno == q.last_lno);
+			assert(p.first_lno > q.first_lno);
+			loc.first_cno = q.first_cno;
+		}
+		
+		if (p.last_lno == q.last_lno) {
 			loc.last_cno = std::max(p.last_cno, q.last_cno);
+		}
+		else if (p.last_lno < q.last_lno) {
+			loc.last_cno = q.last_cno;
+		}
+		else {
+			assert(p.last_lno > q.last_lno);
+			loc.last_cno = p.last_cno;
 		}
 		
 		return loc;

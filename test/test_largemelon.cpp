@@ -137,6 +137,30 @@ namespace largemelon::test {
 	
 	
 	
+	/**@brief The @ref largemelon::span_loc function is robust enough that text
+	 *   location spans can be blindly thrown at it to quickly get the spans of
+	 *   large AST nodes with a lot of child nodes.*/
+	TEST_SUITE("span_loc tests") {
+		/**@test */
+		TEST_CASE("null case") {
+			CHECK_EQ(span_loc(EMPTY_TEXT_LOC, EMPTY_TEXT_LOC), EMPTY_TEXT_LOC);
+		}
+		/**@test The "span" across two equal text locations is equal to that
+		 *   location.*/
+		TEST_CASE("identity case") {
+			CHECK_EQ(span_loc(FIRST_TEXT_LOC, FIRST_TEXT_LOC), FIRST_TEXT_LOC);
+		}
+		/**@test Given a location span @c A that surrounds and encases another
+		 *   span @c B, their cumulative span is equal to @c A.*/
+		TEST_CASE("encapsulation case") {
+			const largemelon::text_loc A = { 2, 7, 4, 0 };
+			const largemelon::text_loc B = { 2, 11, 3, 31 };
+			CHECK_EQ(span_loc(A, B), A);
+		}
+	}
+	
+	
+	
 	/**@test */
 	TEST_CASE("toktext on a Contrapoints phrase") {
 		const std::string text = "no emotions in this video";
