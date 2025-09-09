@@ -196,20 +196,6 @@ namespace largemelon {
 	
 	
 	
-	//~ /**@brief Location spanning and including two text locations.
-	 //~ * @param first_loc  Location of first character in text span.
-	 //~ * @param last_loc   Location of last character in text span.
-	 //~ * @return Location value equal to @c first_loc.first_lno,
-	 //~ *     @c first_loc.first_cno, @c last_loc.last_lno, and
-	 //~ *     @c last_loc.last_cno.*/
-	//~ inline constexpr text_loc span_loc(const text_loc &first_loc,
-		//~ const text_loc &last_loc) {
-		//~ return { first_loc.first_lno, first_loc.first_cno,
-			//~ last_loc.last_lno, last_loc.last_cno };
-	//~ }
-	
-	
-	
 	/**@brief Location spanning and including two text locations.
 	 * @param p Location of first character in text span.
 	 * @param q Location of last character in text span.
