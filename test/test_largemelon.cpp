@@ -180,6 +180,25 @@ namespace largemelon::test {
 			const largemelon::text_loc B = { 2, 11, 3, 31 };
 			CHECK_EQ(span_loc(A, B), A);
 		}
+		/**@test The span across two overlapping, non-disjoint text locations
+		 *   is the span of all characters within those locations.*/
+		TEST_CASE("non-disjoint overlapping case") {
+			auto L = largemelon::text_loc{ 3, 1, 4, 27 };
+			auto R = largemelon::text_loc{ 3, 8, 4, 39 };
+			auto expected = largemelon::text_loc{ 3, 1, 4, 39 };
+			CHECK_EQ(span_loc(L, R), expected);
+			CHECK_EQ(span_loc(R, L), expected);
+		}
+		/**@test The span across two disjoint (non-overlapping) text locations
+		 *   is the span of all characters between and within those
+		 *   locations.*/
+		TEST_CASE("disjoint case") {
+			auto L = largemelon::text_loc{ 2, 5, 2, 8 };
+			auto R = largemelon::text_loc{ 2, 14, 4, 1 };
+			auto expected = largemelon::text_loc{ 2, 5, 4, 1 };
+			CHECK_EQ(span_loc(L, R), expected);
+			CHECK_EQ(span_loc(R, L), expected);
+		}
 	}
 	
 	
