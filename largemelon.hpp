@@ -728,6 +728,22 @@ namespace largemelon {
 	
 	
 	
+	template <typename AstEnumType>
+	inline largemelon::text_loc ast_span_loc(
+		ast_base_type<AstEnumType>* const n) {
+		assert(n != nullptr);
+		return n->loc();
+	}
+	
+	template <typename AstEnumType, typename... Ts>
+	inline largemelon::text_loc ast_span_loc(
+		ast_base_type<AstEnumType>* const n1, Ts... ns) {
+		return largemelon::span_loc(n1->loc(),
+			ast_span_loc<AstEnumType>(ns...));
+	}
+	
+	
+	
 	/**@brief Extends @c ast_base_type to associate it with an enumerated AST
 	 *   node type and implement the @ref ast_base_type::type method.
 	 * @tparam AstEnumType Data type for enumerated AST node type.

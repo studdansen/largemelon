@@ -227,6 +227,11 @@ namespace largemelon::test {
 	 *   derived.*/
 	using ast_base = largemelon::ast_base_type<nt>;
 	
+	template <typename... Ts>
+	inline text_loc derived_ast_span_loc(ast_base* const n1, Ts... ns) {
+		return largemelon::ast_span_loc<nt, Ts...>(n1, ns...);
+	}
+	
 	/**@brief Extends @c ast_base to associate it with @c nt.*/
 	template <nt N>
 	using ast_typed_base = largemelon::ast_typed_base_type<nt, N>;
@@ -345,7 +350,7 @@ namespace largemelon::test {
 	}
 	
 	/**@test */
-	TEST_CASE("binary addition operator") {
+	TEST_CASE("logical-or operator") {
 		using namespace largemelon::test;
 		auto lexpr = new ast_bool_literal({1,0,1,3}, true);
 		auto rexpr = new ast_bool_literal({1,8,1,12}, false);
@@ -369,6 +374,35 @@ namespace largemelon::test {
 		CHECK_EQ(decl->childs().count(decl->expr()), 1);
 		CHECK_EQ(decl->childs().count(expr), 1);
 		delete decl;
+	}
+	
+	/**@test */
+	TEST_SUITE("ast_span_loc tests") {
+		/**@test */
+		TEST_CASE("location of singular Boolean literal") {
+			auto b = new ast_bool_literal({2,4,2,8}, false);
+			CHECK_EQ(derived_ast_span_loc(b), b->loc());
+			delete b;
+		}
+		/**@test */
+		TEST_CASE("location across two nodes") {
+			auto lexpr = new ast_bool_literal({5,13,5,16}, true);
+			auto rexpr = new ast_bool_literal({5,28,5,31}, true);
+			CHECK_EQ(derived_ast_span_loc(lexpr, rexpr),
+				largemelon::text_loc{5,13,5,31});
+			delete rexpr;
+			delete lexpr;
+		}
+		/**@test Node locations can be evaluated in any order.*/
+		TEST_CASE("location across three nodes") {
+			auto e1 = new ast_bool_literal({4,1,4,8}, true);
+			auto e2 = new ast_bool_literal({4,31,4,36}, false);
+			auto e3 = new ast_bool_literal({4,10,4,15}, false);
+			largemelon::text_loc exp_loc = {4,1,4,36};
+			CHECK_EQ(derived_ast_span_loc(e1, e2, e3), exp_loc);
+			CHECK_EQ(derived_ast_span_loc(e2, e3, e1), exp_loc);
+			CHECK_EQ(derived_ast_span_loc(e2, e1, e3), exp_loc);
+		}
 	}
 	
 	
