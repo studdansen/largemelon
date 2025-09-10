@@ -547,7 +547,7 @@ namespace largemelon {
 	 * 
 	 * @warning This function's behavior may be undefined if there are elements
 	 *   of @c prev_widths with value @c 0.*/
-	int update_block_indents(int& indent_change,
+	inline int update_block_indents(int& indent_change,
 		std::vector<size_t>& prev_widths, const size_t curr_width,
 		const int verbosity = 0) {
 		size_t total_prev_width;
