@@ -202,6 +202,13 @@ namespace largemelon {
 	 * @warning This expects, for both @c p and for @c q, the first line and
 	 *   column to come at or before the last line and column.*/
 	inline text_loc span_loc(const text_loc &p, const text_loc &q) {
+		if (p == EMPTY_TEXT_LOC) {
+			return q;
+		}
+		if (q == EMPTY_TEXT_LOC) {
+			return p;
+		}
+		
 		text_loc loc;
 		loc.first_lno = std::min(p.first_lno, q.first_lno);
 		loc.last_lno = std::max(p.last_lno, q.last_lno);
@@ -728,6 +735,10 @@ namespace largemelon {
 	
 	
 	
+	/**@brief Text location spanned by an AST node.
+	 * @tparam AstEnumType Data type for enumerated AST node types.
+	 * @param n AST node.
+	 * @return Equivalent to <code>n->loc()</code>.*/
 	template <typename AstEnumType>
 	inline largemelon::text_loc ast_span_loc(
 		ast_base_type<AstEnumType>* const n) {
@@ -735,11 +746,48 @@ namespace largemelon {
 		return n->loc();
 	}
 	
+	/**@brief Text location spanned by two or more AST nodes.
+	 * @tparam AstEnumType Data type for enumerated AST node types.
+	 * @tparam Ts Data types of other function arguments (which should resolve
+	 *   to template-specialized instances of @ref largemelon::ast_base_type.
+	 * @param n1 First AST node.
+	 * @param ns Other AST nodes.
+	 * @return Text location spanned by @c n1 and by all elements of @c ns.*/
 	template <typename AstEnumType, typename... Ts>
 	inline largemelon::text_loc ast_span_loc(
 		ast_base_type<AstEnumType>* const n1, Ts... ns) {
 		return largemelon::span_loc(n1->loc(),
 			ast_span_loc<AstEnumType>(ns...));
+	}
+	
+	/**@brief Text location spanned by AST nodes.
+	 * @tparam IteratorType Data type for iterator in container of AST nodes.
+	 * @param first Iterator to first AST node.
+	 * @param last Iterator to position just after last AST node.
+	 * @return Text location spanned from @c first to just before @c last.
+	 * 
+	 * The AST nodes from @c first to @c last do not need to be in sequential
+	 * order by text location.
+	 * 
+	 * If <tt>first == last</tt> -- that is, zero AST node elements are
+	 * evaluated, then @ref largemelon::EMPTY_TEXT_LOC is returned.
+	 * 
+	 * @warning This does not (yet) ignore the computational consequences of
+	 *   blindly evaluating @ref largemelon::EMPTY_TEXT_LOC in the context of
+	 *   other, non-empty text location instances.*/
+	template <typename IteratorType>
+	inline largemelon::text_loc ast_seq_span_loc(IteratorType first,
+		IteratorType last) {
+		// static_assert(is_iterator);
+		if (first == last) {
+			return EMPTY_TEXT_LOC;
+		}
+		text_loc loc = (*first)->loc();
+		auto i = first;
+		i++;
+		for (; i!=last; i++) {
+			loc = span_loc(loc, (*i)->loc());
+		}
 	}
 	
 	

@@ -199,6 +199,19 @@ namespace largemelon::test {
 			CHECK_EQ(span_loc(L, R), expected);
 			CHECK_EQ(span_loc(R, L), expected);
 		}
+		/**@test If both text locations are empty (as in, equal to
+		 *   @ref largemelon::EMPTY_TEXT_LOC), then
+		 *   @ref largemelon::EMPTY_TEXT_LOC is returned.*/
+		TEST_CASE("double-empty case") {
+			CHECK_EQ(span_loc(EMPTY_TEXT_LOC, EMPTY_TEXT_LOC), EMPTY_TEXT_LOC);
+		}
+		/**@test If only one text location is empty, then the other, non-empty
+		 *   text location is returned.*/
+		TEST_CASE("one-empty case") {
+			auto p = largemelon::text_loc{ 1, 3, 1, 19 };
+			CHECK_EQ(span_loc(EMPTY_TEXT_LOC, p), p);
+			CHECK_EQ(span_loc(p, EMPTY_TEXT_LOC), p);
+		}
 	}
 	
 	
