@@ -731,6 +731,11 @@ namespace largemelon {
 		}
 		/**@brief Location of original text in parsed source.*/
 		text_loc loc() const { return loc_; }
+		/**@brief Sets this AST node's text location span.
+		 * @param loc Original location in text.*/
+		void set_loc(const text_loc& loc) {
+			this->loc_ = loc;
+		}
 	};
 	
 	
