@@ -591,16 +591,16 @@ namespace largemelon {
 			}
 		}
 		
-		// If the current total indent is less than the previous absolute indent.
-		// It must then match the sum of a sub-range of the relative indents,
-		// starting from the first relative indent.
+		// If the current total indent is less than the previous absolute
+		// indent. It must then match the sum of a sub-range of the relative
+		// indents, starting from the first relative indent.
 		else if (curr_width < total_prev_width) {
 			assert(0 < curr_width);
 			auto rit = prev_widths.rbegin();
 			for (; rit!=prev_widths.rend(); rit++) {
 				total_prev_width -= (*rit);
 				assert(total_prev_width
-					== (size_t)std::accumulate(rit + 1, prev_widths.rend(), 0));
+					== (size_t)std::accumulate(rit+1, prev_widths.rend(), 0));
 				if (total_prev_width == curr_width)
 					break;
 				else if (total_prev_width < curr_width) {
@@ -654,8 +654,9 @@ namespace largemelon {
 			"integral or enumeration type");
 		/**@brief Pointer to parent AST node.*/
 		ast_base_type<AstEnumType>* parent_;
-		/**@brief Pointers to child AST nodes.*/
-		std::set<ast_base_type<AstEnumType>*> childs_;
+		/**@brief Pointers to child AST nodes, in their original order of
+		 *   addition to this node.*/
+		std::vector<ast_base_type<AstEnumType>*> childs_;
 		/**@brief Location in parsed source of text represented by this node.*/
 		text_loc loc_;
 	protected:
@@ -672,10 +673,17 @@ namespace largemelon {
 		 *   sets this node as the parent of that node.
 		 * @param child Node to set as a child of this node.
 		 * @details The parent node of @c child becomes this node.
-		 * @warning @c child cannot be @c nullptr.*/
+		 * @warning @c child cannot be @c nullptr.
+		 * @details If @c child is already in this node's child nodes, then
+		 *   this class method does nothing.*/
 		void add_child(ast_base_type<AstEnumType>* const child) {
+			size_t n = std::count(childs_.begin(), childs_.end(), child);
+			assert(n <= 1);
+			if (n > 0) {
+				return;
+			}
 			child->parent_ = this;
-			childs_.insert(child);
+			childs_.push_back(child);
 		}
 		/**@brief Tail case for @ref add_childs. Does nothing.*/
 		void add_childs() {}
@@ -726,7 +734,7 @@ namespace largemelon {
 			return n;
 		}
 		/**@brief Child AST nodes.*/
-		std::set<ast_base_type<AstEnumType>*> childs() const {
+		std::vector<ast_base_type<AstEnumType>*> childs() const {
 			return childs_;
 		}
 		/**@brief Location of original text in parsed source.*/
@@ -740,6 +748,11 @@ namespace largemelon {
 	
 	
 	
+	//~ inline largemelon::text_loc ast_span_loc(lex_token* const t) {
+		//~ assert(t != nullptr);
+		//~ return t->loc;
+	//~ }
+	
 	/**@brief Text location spanned by an AST node.
 	 * @tparam AstEnumType Data type for enumerated AST node types.
 	 * @param n AST node.
@@ -750,6 +763,11 @@ namespace largemelon {
 		assert(n != nullptr);
 		return n->loc();
 	}
+	
+	//~ template <typename AstEnumType, typename... Ts>
+	//~ inline largemelon::text_loc ast_span_loc(lex_token* const t1, Ts... ns) {
+		//~ return largemelon::span_loc(t1->loc, ast_span_loc<AstEnumType>(ns...));
+	//~ }
 	
 	/**@brief Text location spanned by two or more AST nodes.
 	 * @tparam AstEnumType Data type for enumerated AST node types.
@@ -775,11 +793,7 @@ namespace largemelon {
 	 * order by text location.
 	 * 
 	 * If <tt>first == last</tt> -- that is, zero AST node elements are
-	 * evaluated, then @ref largemelon::EMPTY_TEXT_LOC is returned.
-	 * 
-	 * @warning This does not (yet) ignore the computational consequences of
-	 *   blindly evaluating @ref largemelon::EMPTY_TEXT_LOC in the context of
-	 *   other, non-empty text location instances.*/
+	 * evaluated, then @ref largemelon::EMPTY_TEXT_LOC is returned.*/
 	template <typename IteratorType>
 	inline largemelon::text_loc ast_seq_span_loc(IteratorType first,
 		IteratorType last) {
