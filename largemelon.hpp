@@ -673,10 +673,13 @@ namespace largemelon {
 		 *   sets this node as the parent of that node.
 		 * @param child Node to set as a child of this node.
 		 * @details The parent node of @c child becomes this node.
-		 * @warning @c child cannot be @c nullptr.
+		 * @details If @c child is @c nullptr, then nothing happens.
 		 * @details If @c child is already in this node's child nodes, then
 		 *   this class method does nothing.*/
 		void add_child(ast_base_type<AstEnumType>* const child) {
+			if (child == nullptr) {
+				return;
+			}
 			size_t n = std::count(childs_.begin(), childs_.end(), child);
 			assert(n <= 1);
 			if (n > 0) {
