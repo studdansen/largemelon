@@ -251,7 +251,8 @@ namespace largemelon {
 	
 	/**@brief A token provided by the lexer to the parser.
 	 * @note Use the @c lex_token function to construct instances of this
-	 *     type.*/
+	 *     type.
+	 * @todo Add the integral identifier from the parser as a data member?*/
 	struct lex_token {
 		/**@brief Text matched and pushed to the parser.*/
 		std::string mtext;
