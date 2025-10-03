@@ -738,7 +738,7 @@ namespace largemelon {
 			return n;
 		}
 		/**@brief Child AST nodes.*/
-		std::vector<ast_base_type<AstEnumType>*> childs() const {
+		std::vector<ast_base_type<AstEnumType>*>& childs() const {
 			return childs_;
 		}
 		/**@brief Location of original text in parsed source.*/
