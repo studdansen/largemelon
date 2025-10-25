@@ -1,6 +1,13 @@
 /**@file
  * @brief Single-header C++ framework for bridging between a Ragel-generated
- *   scanner and a Lemon-generated parser.*/
+ *   scanner and a Lemon-generated parser.
+ * @todo To convert an AST to XML, consider that: a) the parent/child
+ *   relationships between AST nodes correspond one-to-one with parent/child
+ *   relationships in the generated XML tree; and b) any additional data in an
+ *   AST node corresponds to the XML attributes for the associated XML node.
+ *   Supporting XML output for a sub-class of @ref largemelon::ast_base_type
+ *   means something like XSLT can be used to transform that data into a target
+ *   form, such as a machine-compilable language.*/
 
 #ifndef LARGEMELON_LARGEMELON_HPP
 #define LARGEMELON_LARGEMELON_HPP
