@@ -483,8 +483,8 @@ namespace largemelon {
 		assert(pparser != nullptr);
 		set_mtext_and_loc_trimmed(mtext, loc, fpath, ts, te, ltrim, rtrim);
 		if (verbosity >= 2) {
-			std::cerr << "Passing token `" << escstr(mtext) << "` at " << loc
-				<< " to the parser" << std::endl;
+			std::cerr << "Passing token `" << escstr(mtext) << "` (id="
+				<< token_id << ") at " << loc << " to the parser" << std::endl;
 		}
 		parse_func(pparser, token_id, new lex_token(mtext, fpath, loc),
 			&context);
@@ -536,8 +536,9 @@ namespace largemelon {
 		assert(pparser != nullptr);
 		set_mtext_and_loc_trimmed(mtext, loc, fpath, ts, te, 0, 0);
 		if (verbosity >= 2) {
-			std::cerr << "Passing token `" << escstr(mtext) << "` at " << loc
-				<< " to the parser as null" << std::endl;
+			std::cerr << "Passing token `" << escstr(mtext) << "` (id="
+				<< token_id << ") at " << loc << " to the parser as null"
+				<< std::endl;
 		}
 		parse_func(pparser, token_id, nullptr, &context);
 		
