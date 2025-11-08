@@ -765,7 +765,7 @@ namespace largemelon {
 		 *   @c nullptr if this AST node does not have an immediate child node
 		 *   with that enumerated type.*/
 		template <AstEnumType ChildEnumType>
-		inline ast_base_type<ChildEnumType>* immed_typed_child() const {
+		inline ast_base_type<AstEnumType>* immed_typed_child() const {
 			auto is_match = [](ast_base_type<AstEnumType>* const n) {
 				assert(n != nullptr);
 				return n->type == ChildEnumType;
