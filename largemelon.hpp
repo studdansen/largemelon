@@ -756,6 +756,27 @@ namespace largemelon {
 		void set_loc(const text_loc& loc) {
 			this->loc_ = loc;
 		}
+		/**@brief Retrieves the first immediate child node with a given
+		 *   enumerated type.
+		 * @tparam ChildEnumType Enumerated AST node type which the found
+		 *   child node must match.
+		 * @return First-in-order immediate child node for which its
+		 *   <tt>type()</tt> member returns equal to @c ChildEnumType, or
+		 *   @c nullptr if this AST node does not have an immediate child node
+		 *   with that enumerated type.*/
+		template <AstEnumType ChildEnumType>
+		inline ast_base_type<ChildEnumType>* immed_typed_child() const {
+			auto is_match = [](ast_base_type<AstEnumType>* const n) {
+				assert(n != nullptr);
+				return n->type == ChildEnumType;
+			};
+			auto found = std::find_if(this->childs()->cbegin(),
+				this->childs()->cend(), is_match);
+			if (found == this->childs()->cend()) {
+				return nullptr;
+			}
+			return (*found);
+		}
 	};
 	
 	

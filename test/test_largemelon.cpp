@@ -385,8 +385,6 @@ namespace largemelon::test {
 		CHECK_NE(decl->expr()->parent(), decl->expr());
 		CHECK_EQ(expr->is_root(), false);
 		CHECK_EQ(decl->expr()->parent(), decl);
-		//~ CHECK_EQ(decl->childs().count(decl->expr()), 1);
-		//~ CHECK_EQ(decl->childs().count(expr), 1);
 		auto childs = decl->childs();
 		CHECK_EQ(std::count(childs.begin(), childs.end(), decl->expr()), 1);
 		CHECK_EQ(std::count(childs.begin(), childs.end(), expr), 1);
