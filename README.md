@@ -17,3 +17,6 @@ types, functions, and classes that can be reused between parsers.
 
 Port this to pure C. Lemon and Ragel output C, not strictly C++.
 This would (potentially vastly) increase its applicability.
+
+Should this be under the MIT License like
+[dedap](https://github.com/studdansen/dedap)?
