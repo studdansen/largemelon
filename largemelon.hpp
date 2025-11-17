@@ -668,6 +668,7 @@ namespace largemelon {
 		/**@brief Pointers to child AST nodes, in their original order of
 		 *   addition to this node.*/
 		child_coll_type childs_;
+	private:
 		/**@brief Pointer to parent AST node.*/
 		ast_base_type<AstEnumType>* parent_;
 		/**@brief Location in parsed source of text represented by this node.*/
@@ -678,7 +679,7 @@ namespace largemelon {
 		 * @details This node is set as the root node of its AST and with no
 		 *   child nodes. This node's parent node is not set until this node is
 		 *   set as a child node of another node.*/
-		ast_base_type(const text_loc& loc) : parent_(this), childs_(),
+		ast_base_type(const text_loc& loc) : childs_(), parent_(this),
 			loc_(loc) {
 			assert(parent_ != nullptr);
 		}
