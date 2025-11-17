@@ -663,9 +663,12 @@ namespace largemelon {
 			"integral or enumeration type");
 		/**@brief Pointer to parent AST node.*/
 		ast_base_type<AstEnumType>* parent_;
+		/**@brief Data type for a sequential collection of pointers to child
+		 *   AST nodes, in their original order of addition to this node.*/
+		typedef std::vector<ast_base_type<AstEnumType>*> child_coll_type;
 		/**@brief Pointers to child AST nodes, in their original order of
 		 *   addition to this node.*/
-		std::vector<ast_base_type<AstEnumType>*> childs_;
+		child_coll_type childs_;
 		/**@brief Location in parsed source of text represented by this node.*/
 		text_loc loc_;
 	protected:
@@ -746,9 +749,7 @@ namespace largemelon {
 			return n;
 		}
 		/**@brief Child AST nodes.*/
-		const std::vector<ast_base_type<AstEnumType>*>& childs() const {
-			return childs_;
-		}
+		const child_coll_type& childs() const { return childs_; }
 		/**@brief Location of original text in parsed source.*/
 		text_loc loc() const { return loc_; }
 		/**@brief Sets this AST node's text location span.
