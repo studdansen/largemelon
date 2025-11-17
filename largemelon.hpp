@@ -661,14 +661,15 @@ namespace largemelon {
 		static_assert(std::is_enum<AstEnumType>::value
 			|| std::is_integral<AstEnumType>::value, "AstEnumType must be an "
 			"integral or enumeration type");
-		/**@brief Pointer to parent AST node.*/
-		ast_base_type<AstEnumType>* parent_;
+	protected:
 		/**@brief Data type for a sequential collection of pointers to child
 		 *   AST nodes, in their original order of addition to this node.*/
 		typedef std::vector<ast_base_type<AstEnumType>*> child_coll_type;
 		/**@brief Pointers to child AST nodes, in their original order of
 		 *   addition to this node.*/
 		child_coll_type childs_;
+		/**@brief Pointer to parent AST node.*/
+		ast_base_type<AstEnumType>* parent_;
 		/**@brief Location in parsed source of text represented by this node.*/
 		text_loc loc_;
 	protected:
