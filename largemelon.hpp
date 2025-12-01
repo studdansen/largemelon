@@ -25,6 +25,10 @@
 #include <type_traits>
 #include <vector>
 
+/**@namespace largemelon
+ * @brief Data types and function for bridging between a Ragel-generated
+ *   scanner and a Lemon-generated parser.*/
+
 namespace largemelon {
 	
 	
