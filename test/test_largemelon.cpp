@@ -70,7 +70,7 @@ namespace largemelon::test {
 	}
 	
 	/**@test If a string has no characters to escape, then the string is not
-	 *     changed at all.*/
+	 *   changed at all.*/
 	TEST_CASE("string with non-escaped characters") {
 		std::string s_orig = "the wheels on the bus";
 		std::string s_new = largemelon::escstr(s_orig);
@@ -83,7 +83,9 @@ namespace largemelon::test {
 		CHECK(s == R"(Median\nNarrative)");
 	}
 	
-	/**@test */
+	/**@test When tracking block indents, encountering a line with the same
+	 *   indent as the current aggregate indent does not change the accumulated
+	 *   block indent values.*/
 	TEST_CASE("same current indent does not change block indents") {
 		int indent_change, rc;
 		std::vector<size_t> indents = {4, 4};
@@ -93,7 +95,8 @@ namespace largemelon::test {
 		CHECK(indent_change == 0);
 	}
 
-	/**@test */
+	/**@test When tracking block indents, encountering a line with no indent at
+	 *   all clears the accumulated block indent values.*/
 	TEST_CASE("no current indent clears block indents") {
 		int indent_change, rc;
 		std::vector<size_t> indents = {2, 6, 4};
@@ -103,7 +106,10 @@ namespace largemelon::test {
 		CHECK(indent_change == -3);
 	}
 
-	/**@test */
+	/**@test When tracking block indents, encountering a line with an indent
+	 *   greater than the current aggregate indent extends the accumulated
+	 *   block indent values by the difference between the new line's indent
+	 *   and the current aggregate indent.*/
 	TEST_CASE("larger current indent extends block indents") {
 		int indent_change, rc;
 		std::vector<size_t> indents = {2, 2, 2, 2};
@@ -123,7 +129,9 @@ namespace largemelon::test {
 		// TODO: indicate specifically that it's a bad indent
 	}
 
-	/**@test */
+	/**@test When tracking block indents, the indent of the next line must be
+	 *   equal to a sum of accumulated block indent values starting from the
+	 *   first block indent value.*/
 	TEST_CASE("smaller aligned current indent trims block indents") {
 		int indent_change, rc;
 		std::vector<size_t> indents = {4, 4, 4};
@@ -217,7 +225,8 @@ namespace largemelon::test {
 	
 	
 	
-	/**@test */
+	/**@test The @ref largemelon::toktext function can extract text from a C
+	 *   string using pointer offsets.*/
 	TEST_CASE("toktext on a Contrapoints phrase") {
 		const std::string text = "no emotions in this video";
 		std::string sample = largemelon::toktext(text.c_str(),
