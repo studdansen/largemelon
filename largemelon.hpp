@@ -1015,7 +1015,6 @@ LARGEMELON_LEMON_PARSETRACE_DECL(PREFIX)
  *   pointer.
  * @param TOKEN_ID Numeric identifier of queried token.
  * @todo Is Lemon's older interface simply one where @c YYNTOKEN isn't defined?
- * @todo Move this to @c largemelon once it's proven out.
  * @details This function calls the @c yy_find_shift_action function generated
  *   by Lemon. Defining this as a function, even as a template function, would
  *   require @c yy_find_shift_action to be declared earlier, which is not
@@ -1032,7 +1031,6 @@ LARGEMELON_LEMON_PARSETRACE_DECL(PREFIX)
  * @param TOKEN_ID Numeric identifier of queried token.
  * @todo Is Lemon's newer interface simply one where @c YYNTOKEN is
  *   defined?
- * @todo Move this to @c largemelon once it's proven out.
  * @todo Check the @c yy_find_shift_action function signature at
  *   compile-time to use the correct <tt>is_next_exp_token_id_*</tt>
  *   function.
