@@ -802,31 +802,33 @@ namespace largemelon {
 			ast_span_loc<AstEnumType>(ns...));
 	}
 	
-	/**@brief Text location spanned by AST nodes.
-	 * @tparam IteratorType Data type for iterator in container of AST nodes.
-	 * @param first Iterator to first AST node.
-	 * @param last Iterator to position just after last AST node.
-	 * @return Text location spanned from @c first to just before @c last.
-	 * 
-	 * The AST nodes from @c first to @c last do not need to be in sequential
-	 * order by text location.
-	 * 
-	 * If <tt>first == last</tt> -- that is, zero AST node elements are
-	 * evaluated, then @ref largemelon::EMPTY_TEXT_LOC is returned.*/
-	template <typename IteratorType>
-	inline largemelon::text_loc ast_seq_span_loc(IteratorType first,
-		IteratorType last) {
-		// static_assert(is_iterator);
-		if (first == last) {
-			return EMPTY_TEXT_LOC;
-		}
-		text_loc loc = (*first)->loc();
-		auto i = first;
-		i++;
-		for (; i!=last; i++) {
-			loc = span_loc(loc, (*i)->loc());
-		}
-	}
+	//~ /**@brief Text location spanned by AST nodes.
+	 //~ * @tparam IteratorType Data type for iterator in container of AST nodes.
+	 //~ * @param first Iterator to first AST node.
+	 //~ * @param last Iterator to position just after last AST node.
+	 //~ * @return Text location spanned from @c first to just before @c last.
+	 //~ * 
+	 //~ * The AST nodes from @c first to @c last do not need to be in sequential
+	 //~ * order by text location.
+	 //~ * 
+	 //~ * If <tt>first == last</tt> -- that is, zero AST node elements are
+	 //~ * evaluated, then @ref largemelon::EMPTY_TEXT_LOC is returned.
+	 //~ * 
+	 //~ * @todo This is not used in practice.*/
+	//~ template <typename IteratorType>
+	//~ inline largemelon::text_loc ast_seq_span_loc(IteratorType first,
+		//~ IteratorType last) {
+		//~ // static_assert(is_iterator);
+		//~ if (first == last) {
+			//~ return EMPTY_TEXT_LOC;
+		//~ }
+		//~ text_loc loc = (*first)->loc();
+		//~ auto i = first;
+		//~ i++;
+		//~ for (; i!=last; i++) {
+			//~ loc = span_loc(loc, (*i)->loc());
+		//~ }
+	//~ }
 	
 	
 	
