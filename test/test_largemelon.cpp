@@ -292,6 +292,7 @@ namespace largemelon::test {
 		largemelon::is_ast_node_class_type<nt, ast_bool_literal>::value,
 		"expected ast_bool_literal to be an AST node class");
 	
+	/**@brief AST node for a logical-or expression.*/
 	class ast_binop_logor : public ast_typed_base<nt::BINOP_LOGOR> {
 		/**@brief Left-hand expression.*/
 		std::unique_ptr<ast_base> lexpr_;
@@ -399,6 +400,11 @@ namespace largemelon::test {
 		CHECK_EQ(std::count(childs.begin(), childs.end(), expr), 1);
 		delete decl;
 	}
+	
+	//~ /**@test */
+	//~ TEST_CASE("immed_typed_child for data declaration") {
+		
+	//~ }
 	
 	/**@test */
 	TEST_SUITE("ast_span_loc tests") {
