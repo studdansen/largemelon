@@ -29,8 +29,6 @@ The following variables are set by this module:
 
 .. todo::
    
-   Finalize/debug support for downloading and compiling Lemon's sources.
-   
    Harden handling of function arguments.
 
 The following variable can be set to alter the behavior of this module:
