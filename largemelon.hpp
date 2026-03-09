@@ -1,6 +1,11 @@
 /**@file
  * @brief Single-header C++ framework for bridging between a Ragel-generated
  *   scanner and a Lemon-generated parser.
+ * @details This header file is as much a C++ library as it is a user guide for
+ *   <A HREF="https://www.colm.net/files/ragel/ragel-guide-6.10.pdf">Ragel</A>
+ *   and <A HREF="https://sqlite.org/src/doc/trunk/doc/lemon.html">Lemon</A>.
+ *   Some of that extra information isn't required to actually use the library,
+ *   so it is marked by Doxygen's @c internal tag to be conditionally hidden.
  * @todo To convert an AST to XML, consider that: a) the parent/child
  *   relationships between AST nodes correspond one-to-one with parent/child
  *   relationships in the generated XML tree; and b) any additional data in an
@@ -1017,12 +1022,16 @@ LARGEMELON_LEMON_PARSETRACE_DECL(PREFIX)
  *   pointer.
  * @param TOKEN_ID Numeric identifier of queried token.
  * @todo Is Lemon's older interface simply one where @c YYNTOKEN isn't defined?
- * @details This function calls the @c yy_find_shift_action function generated
+ * @internal This function calls the @c yy_find_shift_action function generated
  *   by Lemon. Defining this as a function, even as a template function, would
  *   require @c yy_find_shift_action to be declared earlier, which is not
- *   possible.*/
+ *   possible.
+ * @internal @c YYNSTATE is the number of parser states and @c YYNRULE is the
+ *   number of rule states
+ */
 #define LARGEMELON_IS_NEXT_EXP_TOKEN_ID_OLDER(PPARSER,TOKEN_ID) \
-	(yy_find_shift_action((yyParser*)(PPARSER),(TOKEN_ID)) < YYNSTATE+YYNRULE)
+	(yy_find_shift_action((yyParser*)(PPARSER),(TOKEN_ID)) \
+	< (YYNSTATE)+(YYNRULE))
 
 /**@def LARGEMELON_IS_NEXT_EXP_TOKEN_ID_NEWER
  * @brief Macro resolving to a function call that returns whether a given token
@@ -1036,10 +1045,13 @@ LARGEMELON_LEMON_PARSETRACE_DECL(PREFIX)
  * @todo Check the @c yy_find_shift_action function signature at
  *   compile-time to use the correct <tt>is_next_exp_token_id_*</tt>
  *   function.
- * @details This function calls the @c yy_find_shift_action function generated
+ * @internal This function calls the @c yy_find_shift_action function generated
  *   by Lemon. Defining this as a function, even as a template function, would
  *   require @c yy_find_shift_action to be declared earlier, which is not
- *   possible.*/
+ *   possible.
+ * @internal @c YYCODETYPE is the data type of integral state values within the
+ *   Lemon-generated source code. @c YY_ERROR_ACTION is the integral identifier
+ *   for the error action in that generated source code.*/
 #define LARGEMELON_IS_NEXT_EXP_TOKEN_ID_NEWER(PPARSER,TOKEN_ID) \
 	(yy_find_shift_action((TOKEN_ID),((yyParser*)(PPARSER))->yytos->stateno) \
 	!= YY_ERROR_ACTION)
