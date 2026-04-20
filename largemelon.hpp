@@ -212,46 +212,62 @@ namespace largemelon {
 	
 	
 	
+	/**@brief Line number at beginning of text span.
+	 * @param p Location of first text character(s).
+	 * @param q Location of last text character(s).*/
+	inline constexpr size_t span_loc_first_lno(const text_loc& p,
+		const text_loc& q) {
+		return std::min(p.first_lno, q.first_lno);
+	}
+	
+	/**@brief Line number at end of text span.
+	 * @param p Location of first text character(s).
+	 * @param q Location of last text character(s).*/
+	inline constexpr size_t span_loc_last_lno(const text_loc& p,
+		const text_loc& q) {
+		return std::max(p.last_lno, q.last_lno);
+	}
+	
+	/**@brief Column number at beginning of text span.
+	 * @param p Location of first text character(s).
+	 * @param q Location of last text character(s).*/
+	inline constexpr size_t span_loc_first_cno(const text_loc& p,
+		const text_loc& q) {
+		return (p.first_lno == q.first_lno)
+			? std::min(p.first_cno, q.first_cno)
+			: ((p.first_lno < q.first_lno)
+				? p.first_cno
+				: q.first_cno);
+	}
+	
+	/**@brief Column number at end of text span.
+	 * @param p Location of first text character(s).
+	 * @param q Location of last text character(s).*/
+	inline constexpr size_t span_loc_last_cno(const text_loc& p,
+		const text_loc& q) {
+		return (p.last_lno == q.last_lno)
+			? std::max(p.last_cno, q.last_cno)
+			: ((p.last_lno < q.last_lno)
+				? q.last_cno
+				: p.last_cno);
+	}
+	
 	/**@brief Location spanning and including two text locations.
 	 * @param p Location of first character in text span.
 	 * @param q Location of last character in text span.
 	 * @warning This expects, for both @c p and for @c q, the first line and
 	 *   column to come at or before the last line and column.*/
-	inline text_loc span_loc(const text_loc &p, const text_loc &q) {
-		if (p == EMPTY_TEXT_LOC) {
-			return q;
-		}
-		if (q == EMPTY_TEXT_LOC) {
-			return p;
-		}
-		
-		text_loc loc;
-		loc.first_lno = std::min(p.first_lno, q.first_lno);
-		loc.last_lno = std::max(p.last_lno, q.last_lno);
-		
-		if (p.first_lno == q.first_lno) {
-			loc.first_cno = std::min(p.first_cno, q.first_cno);
-		}
-		else if (p.first_lno < q.first_lno) {
-			loc.first_cno = p.first_cno;
-		}
-		else {
-			assert(p.first_lno > q.first_lno);
-			loc.first_cno = q.first_cno;
-		}
-		
-		if (p.last_lno == q.last_lno) {
-			loc.last_cno = std::max(p.last_cno, q.last_cno);
-		}
-		else if (p.last_lno < q.last_lno) {
-			loc.last_cno = q.last_cno;
-		}
-		else {
-			assert(p.last_lno > q.last_lno);
-			loc.last_cno = p.last_cno;
-		}
-		
-		return loc;
+	inline constexpr text_loc span_loc(const text_loc &p, const text_loc &q) {
+		return (p == EMPTY_TEXT_LOC)
+			? q
+			: ((q == EMPTY_TEXT_LOC)
+				? p
+				: text_loc{
+					span_loc_first_lno(p, q),
+					span_loc_first_cno(p, q),
+					span_loc_last_lno(p, q),
+					span_loc_last_cno(p, q)
+				});
 	}
 	
 	
