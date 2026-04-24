@@ -373,7 +373,9 @@ namespace largemelon::test {
 		CHECK(node.is_root());
 	}
 	
-	/**@test */
+	/**@test For an AST node @c binop with no parent node and two child nodes
+	 *   @c lexpr and @c rexpr, @c binop is the AST's root node, and neither
+	 *   @c lexpr nor @c rexpr is the root node.*/
 	TEST_CASE("logical-or operator") {
 		using namespace largemelon::test;
 		auto lexpr = new ast_bool_literal({1,0,1,3}, true);
