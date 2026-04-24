@@ -144,8 +144,6 @@ namespace largemelon {
 	 *     @c prev_loc.
 	 * @todo Document @ref mtext_loc() with an illustration of lines and column
 	 *     numbers (e.g. with column @c 0 before the line).
-	 * @todo Refactor to exclude regexes, to improve performance. At least
-	 *   bookmark it.
 	 * 
 	 * @code{.cpp}
 	 * text_loc prev_loc = {1, 26, 1, 29};
@@ -157,8 +155,8 @@ namespace largemelon {
 	inline text_loc mtext_loc(const text_loc &prev_loc,
 		const std::string &mtext) {
 		
-		static const std::regex RGX_NL = std::regex(R"(\r\n|\r|\n)");
-		std::sregex_iterator nli, rend;
+		//~ static const std::regex RGX_NL = std::regex(R"(\r\n|\r|\n)");
+		//~ std::sregex_iterator nli, rend;
 		text_loc loc;
 		size_t num_newlines, tpos;
 		
@@ -174,14 +172,14 @@ namespace largemelon {
 		// The number of lines spanned by the new location is equal to the
 		// number of newline character sequences in `mtext`.
 		
-		num_newlines = 0;
+		//~ num_newlines = 0;
 		tpos = 0;
-		nli = std::sregex_iterator(mtext.cbegin(), mtext.cend(), RGX_NL);
-		rend = std::sregex_iterator();
-		for (; nli!=rend; nli++) {
-			num_newlines++;
-			tpos = nli->position(0) + nli->length(0);
-		}
+		//~ nli = std::sregex_iterator(mtext.cbegin(), mtext.cend(), RGX_NL);
+		//~ rend = std::sregex_iterator();
+		//~ for (; nli!=rend; nli++) {
+			//~ num_newlines++;
+			//~ tpos = nli->position(0) + nli->length(0);
+		//~ }
 		
 		// If any newlines were encountered in `mtext`, then the column number
 		// of the last position spanned by the new location is equal to the
@@ -192,13 +190,37 @@ namespace largemelon {
 		// location is simply the value of the previous location's last
 		// position plus the number of positions in `mtext`.
 		
-		if (num_newlines > 0) {
-			loc.last_lno = loc.first_lno + num_newlines;
-			loc.last_cno = mtext.length() - tpos;
-		}
-		else {
-			loc.last_lno = loc.first_lno;
-			loc.last_cno = prev_loc.last_cno + mtext.length();
+		//~ if (num_newlines > 0) {
+			//~ loc.last_lno = loc.first_lno + num_newlines;
+			//~ loc.last_cno = mtext.length() - tpos;
+		//~ }
+		//~ else {
+			//~ loc.last_lno = loc.first_lno;
+			//~ loc.last_cno = prev_loc.last_cno + mtext.length();
+		//~ }
+		
+		loc.last_lno = loc.first_lno;
+		loc.last_cno = loc.first_cno;
+		while (tpos < mtext.size()) {
+			if (mtext[tpos] == '\r') {
+				tpos++;
+				if (tpos < mtext.size()) {
+					if (mtext[tpos] == '\n') {
+						tpos++;
+					}
+				}
+				loc.last_lno++;
+				loc.last_cno = 0;
+			}
+			else if (mtext[tpos] == '\n') {
+				tpos++;
+				loc.last_lno++;
+				loc.last_cno = 0;
+			}
+			else {
+				tpos++;
+				loc.last_cno++;
+			}
 		}
 		
 		return loc;
