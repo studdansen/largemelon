@@ -437,6 +437,16 @@ namespace largemelon::test {
 		}
 	}
 	
+	/**@test */
+	TEST_SUITE("mtext_loc tests") {
+		/**@test If @c prev_loc.last_cno is past all the characters on the
+		 *   current line, then the newline sequence is coming up and that
+		 *   erroneous extra column won't matter.*/
+		TEST_CASE("previous last column is past all characters on line") {
+			
+		}
+	}
+	
 	
 	
 } // namespace largemelon::test

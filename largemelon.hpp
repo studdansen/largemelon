@@ -31,7 +31,7 @@
 #include <vector>
 
 /**@namespace largemelon
- * @brief Data types and function for bridging between a Ragel-generated
+ * @brief Data types and functions for bridging between a Ragel-generated
  *   scanner and a Lemon-generated parser.*/
 
 namespace largemelon {
@@ -290,7 +290,7 @@ namespace largemelon {
 		text_loc loc;
 		/**@brief Default constructor.
 		 * @details @c mtext and @c fpath are set to zero-length values, and
-		 *   @c loc is set to @ref largemelon::FIRST_TEXT_LOC.*/
+		 *   @c loc is set to @ref FIRST_TEXT_LOC.*/
 		lex_token() : mtext(), fpath(), loc(FIRST_TEXT_LOC) {}
 		/**@brief Constructor.
 		 * @param mtext Text matched and pushed to the parser.
@@ -462,7 +462,7 @@ namespace largemelon {
 	/**@brief Executes lexer action code for a single parsing step.
 	 * @tparam ContextType Data type for the context object being passed by
 	 *   pointer between calls to the parser. This is the same as the data
-	 *   type used in the <tt>%extra_argument</tt> directive in the Lemon
+	 *   type used in the @%<tt>extra_argument</tt> directive in the Lemon
 	 *   specification file, and thus passed as the fourth argument to the
 	 *   function passed to @c parse_func.
 	 * @param mtext Matched text, extracted from parsed text.
