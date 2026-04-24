@@ -90,7 +90,7 @@ namespace largemelon {
 	/**@brief Inequality operator for @c text_loc.
 	 * @param lhs First position in text.
 	 * @param rhs Second position in text.
-	 * @return Equivalent to <code>!(lhs == rhs)</code>.*/
+	 * @return Equivalent to <tt>!(lhs == rhs)</tt>.*/
 	inline constexpr bool operator!=(const text_loc &lhs,
 		const text_loc &rhs) {
 		return !(lhs == rhs);
@@ -125,7 +125,7 @@ namespace largemelon {
 	}
 	
 	/**@brief Location of text "span" at the start of any file or string, from
-	 *        which all other location values are calculated.*/
+	 *     which all other location values are calculated.*/
 	static const text_loc FIRST_TEXT_LOC = { 1, 0, 1, 0 };
 	
 	/**@brief Empty, "uninitialized" @c text_loc value.*/
@@ -135,17 +135,19 @@ namespace largemelon {
 	
 	/**@brief Location of a given text string in a larger string being parsed.
 	 * @param prev_loc Location of text previous to @c mtext.
-	 * @param mtext    Text for which location is calculated.
+	 * @param mtext Text for which location is calculated.
 	 * @return Location value with @c text_loc::first_lno and
-	 *     @c text_loc::first_cno at the first character of @c mtext and
-	 *     @c text_loc::last_lno and @c text_loc::last_cno at the last
+	 *     @ref text_loc::first_cno at the first character of @c mtext and
+	 *     @ref text_loc::last_lno and @c text_loc::last_cno at the last
 	 *     character of @c mtext.
 	 * @note Only @c prev_loc.last_lno and @c prev_loc.last_cno are used from
 	 *     @c prev_loc.
-	 * @todo Document @c mtext_loc() with an illustration of lines and column
+	 * @todo Document @ref mtext_loc() with an illustration of lines and column
 	 *     numbers (e.g. with column @c 0 before the line).
+	 * @todo Refactor to exclude regexes, to improve performance. At least
+	 *   bookmark it.
 	 * 
-	 * @code
+	 * @code{.cpp}
 	 * text_loc prev_loc = {1, 26, 1, 29};
 	 * text_loc loc = mtext_loc("Everything is creepy and dark and dirty.",
 	 *   prev_loc);
@@ -207,7 +209,8 @@ namespace largemelon {
 	
 	/**@brief Line number at beginning of text span.
 	 * @param p Location of first text character(s).
-	 * @param q Location of last text character(s).*/
+	 * @param q Location of last text character(s).
+	 * @return Minimum value of @c p.first_lno and @c q.first_lno.*/
 	inline constexpr size_t span_loc_first_lno(const text_loc& p,
 		const text_loc& q) {
 		return std::min(p.first_lno, q.first_lno);
@@ -215,7 +218,8 @@ namespace largemelon {
 	
 	/**@brief Line number at end of text span.
 	 * @param p Location of first text character(s).
-	 * @param q Location of last text character(s).*/
+	 * @param q Location of last text character(s).
+	 * @return Maximum value of @c p.last_lno and @c q.last_lno.*/
 	inline constexpr size_t span_loc_last_lno(const text_loc& p,
 		const text_loc& q) {
 		return std::max(p.last_lno, q.last_lno);
@@ -275,8 +279,7 @@ namespace largemelon {
 	
 	
 	/**@brief A token provided by the lexer to the parser.
-	 * @note Use the @c lex_token function to construct instances of this
-	 *     type.
+	 * @note Use the @ref lex_token constructor to instantiate this type.
 	 * @todo Add the integral identifier from the parser as a data member?*/
 	struct lex_token {
 		/**@brief Text matched and pushed to the parser.*/
@@ -297,7 +300,7 @@ namespace largemelon {
 			const text_loc& loc) : mtext(mtext), fpath(fpath), loc(loc) {}
 	};
 	
-	/**@brief Serializes a @c lex_token instance.
+	/**@brief Serializes a @ref lex_token instance.
 	 * @param os Text output stream.
 	 * @param token Lexer token.
 	 * @return @c os, with @c token serialized and appended.*/
@@ -310,13 +313,13 @@ namespace largemelon {
 	}
 	
 	/**@brief Returns the string spanning between two pointers in a
-	 *     <code>char *</code> instance.
+	 *   <tt>char *</tt> instance.
 	 * @param ts First position.
 	 * @param te Last position, plus 1.
 	 * @return String starting with character at position @c ts and ending at
-	 *     character at position just before @c te.
+	 *   character at position just before @c te.
 	 * @warning @c ts and @c te cannot be null pointers (@c nullptr). Also, the
-	 *     result of <code>te - ts</code> must be zero or greater.*/
+	 *   result of <tt>te - ts</tt> must be zero or greater.*/
 	inline std::string toktext(const char *ts, const char *te) {
 		assert(ts != nullptr);
 		assert(te != nullptr);
@@ -325,7 +328,7 @@ namespace largemelon {
 	}
 	
 	/**@brief Returns the string spanning between two pointers in a
-	 *   <code>char *</code> instance, with some characters trimmed from the
+	 *   <tt>char *</tt> instance, with some characters trimmed from the
 	 *   beginning and end of the resultant string.
 	 * @param ts Position of first character in returned string.
 	 * @param te Position one past the last character in returned string.
@@ -335,7 +338,7 @@ namespace largemelon {
 	 *   @c ts and ending @c rtrim characters before character at position
 	 *   @c te.
 	 * @warning @c ts and @c te cannot be null pointers (@c nullptr), and the
-	 *   result of <code>(te - rtrim) - (ts + ltrim)</code> must be zero or
+	 *   result of <tt>(te - rtrim) - (ts + ltrim)</tt> must be zero or
 	 *   greater.*/
 	inline std::string toktext(const char *ts, const char *te,
 		const size_t ltrim, const size_t rtrim) {
@@ -361,30 +364,28 @@ namespace largemelon {
 	using free_func_type = void (*)(void *) noexcept;
 	
 	/**@brief Data type for a function pointer with function signature matching
-	 *     that of the <c>ParseAlloc()</c>-like function generated by the Lemon
-	 *     parser generator.*/
+	 *   that of the <tt>ParseAlloc()</tt>-like function generated by the Lemon
+	 *   parser generator.*/
 	using lemon_parsealloc_func_type = std::function<void*(malloc_func_type)>;
-	//~ using lemon_parsealloc_func_type = std::function<void*(*)(size_t)>;
-	//~ void *(*malloc_func)(size_t)
 	
 	/**@brief Data type for a function pointer with function signature matching
-	 *     that of the <c>ParseFree()</c>-like function generated by the Lemon
-	 *     parser generator.*/
+	 *   that of the <tt>ParseFree()</tt>-like function generated by the Lemon
+	 *   parser generator.*/
 	using lemon_parsefree_func_type = std::function<void(void*,
 		free_func_type)>;
 	
 	/**@brief Data type for a function pointer with function signature matching
-	 *     that of the <c>Parse()</c>-like function generated by the Lemon
-	 *     parser generator.
+	 *   that of the <tt>Parse()</tt>-like function generated by the Lemon
+	 *   parser generator.
 	 * @tparam ContextType Data type for the extra argument, passed by pointer
-	 *     between calls to <c>Parse()</c> (or its renamed equivalent).*/
+	 *   between calls to <tt>Parse()</tt> (or its renamed equivalent).*/
 	template <typename ContextType>
 	using lemon_parse_func_type = std::function<void(void *, int, lex_token *,
 		ContextType *)>;
 	
 	/**@brief Data type for a function pointer with function signature matching
-	 *     that of the <c>ParseTrace()</c>-like function generated by the Lemon
-	 *     parser generator.*/
+	 *   that of the <tt>ParseTrace()</tt>-like function generated by the Lemon
+	 *   parser generator.*/
 	using lemon_parsetrace_func_type = std::function<void(FILE *, char *)>;
 	
 	
@@ -460,35 +461,35 @@ namespace largemelon {
 	
 	/**@brief Executes lexer action code for a single parsing step.
 	 * @tparam ContextType Data type for the context object being passed by
-	 *     pointer between calls to the parser. This is the same as the data
-	 *     type used in the <c>%extra_argument</c> directive in the Lemon
-	 *     specification file, and thus passed as the fourth argument to the
-	 *     function passed to @c parse_func.
+	 *   pointer between calls to the parser. This is the same as the data
+	 *   type used in the <tt>%extra_argument</tt> directive in the Lemon
+	 *   specification file, and thus passed as the fourth argument to the
+	 *   function passed to @c parse_func.
 	 * @param mtext Matched text, extracted from parsed text.
 	 * @param loc Location of matched text, relative to parsed text.
 	 * @param context Parsing context populated during each parsing step.
 	 * @param fpath Path to file being parsed.
-	 * @param parse_func <c>Parse()</c>-like function wrapped by this one.
+	 * @param parse_func <tt>Parse()</tt>-like function wrapped by this one.
 	 * @param ts Pointer to position of first matched character in parsed text.
 	 * @param te Pointer to position just after last matched character in
-	 *     parsed text.
+	 *   parsed text.
 	 * @param pparser Pointer to allocated instance of parser.
 	 * @param token_id Value of token, as defined in a Lemon-generated header
-	 *     file, being passed to the parser.
+	 *   file, being passed to the parser.
 	 * @param ltrim Number of characters to trim from the front of the parsed
-	 *     text, starting from @c ts.
+	 *   text, starting from @c ts.
 	 * @param rtrim Number of characters to trim from the end of the parsed
-	 *     text, starting from @c te.
+	 *   text, starting from @c te.
 	 * @param verbosity Level of debug output.
 	 * @warning This dynamically allocates a new @ref lex_token instance.
-	 * @note Because @c pparser is just a <c>void *</c>, and because every
-	 *     parser implemented by Lemon is allocated as a <c>void *</c>, <em>any
-	 *     kind of Lemon-created parser can be used with this function</em>.
-	 *     None of the machinery implementing this function is dependent on any
-	 *     particular properties of a Ragel-derived scanner, on any formal
-	 *     grammar definitions, or on the structure of the @c ContextType data
-	 *     type that is passed to the @c parse_func call; this function can be
-	 *     reused as-is.*/
+	 * @note Because @c pparser is just a <tt>void *</tt>, and because every
+	 *   parser implemented by Lemon is allocated as a <tt>void *</tt>, <em>any
+	 *   kind of Lemon-created parser can be used with this function</em>.
+	 *   None of the machinery implementing this function is dependent on any
+	 *   particular properties of a Ragel-derived scanner, on any formal
+	 *   grammar definitions, or on the structure of the @c ContextType data
+	 *   type that is passed to the @c parse_func call; this function can be
+	 *   reused as-is.*/
 	template <typename ContextType>
 	inline void parse_token_trimmed(std::string& mtext, text_loc& loc,
 		ContextType& context, const std::filesystem::path& fpath,
@@ -512,24 +513,23 @@ namespace largemelon {
 	
 	
 	/**@brief Executes action code for a single parsing step, without building
-	 *     a lexer token and passing the matched text into the parser
-	 *     machinery.
+	 *   a lexer token and passing the matched text into the parser machinery.
 	 * @tparam ContextType Data type for the context object being passed by
-	 *     pointer between calls to the parser. This is the same as the data
-	 *     type used in the <c>%extra_argument</c> directive in the Lemon
-	 *     specification file, and thus passed as the fourth argument to the
-	 *     function passed to @c parse_func.
+	 *   pointer between calls to the parser. This is the same as the data type
+	 *   used in the <tt>%extra_argument</tt> directive in the Lemon
+	 *   specification file, and thus passed as the fourth argument to the
+	 *   function passed to @c parse_func.
 	 * @param mtext Matched text, extracted from parsed text.
 	 * @param loc Location of matched text, relative to parsed text.
 	 * @param context Parsing context populated during each parsing step.
 	 * @param fpath Path to file being parsed.
-	 * @param parse_func <c>Parse()</c>-like function wrapped by this one.
+	 * @param parse_func <tt>Parse()</tt>-like function wrapped by this one.
 	 * @param ts Pointer to position of first matched character in parsed text.
 	 * @param te Pointer to position just after last matched character in
-	 *     parsed text.
+	 *   parsed text.
 	 * @param pparser Pointer to allocated instance of parser.
-	 * @param token_id Value of token, as defined in @c parser/src/parser.h,
-	 *     being passed to the parser.
+	 * @param token_id Value of token, as defined in a Lemon-emitted C/C++
+	 *   header file (e.g., <tt>parser.h</tt>), being passed to the parser.
 	 * @param verbosity Level of debug output.
 	 * 
 	 * This function is used when the actual contents of a matched token are
@@ -540,8 +540,8 @@ namespace largemelon {
 	 *     Its effectiveness is thus questionable.
 	 * 
 	 * @note The same restrictions -- or lack thereof -- on the usage of
-	 *     @c parse_token_trimmed() apply to this function with respect to the
-	 *     @c pparser argument.*/
+	 *   @ref parse_token_trimmed() apply to this function with respect to the
+	 *   @c pparser argument.*/
 	template <typename ContextType>
 	inline void parse_null_token(std::string& mtext, text_loc& loc,
 		ContextType& context, const std::filesystem::path& fpath,
@@ -969,7 +969,7 @@ namespace largemelon {
  *   generated by Lemon.
  * @param PREFIX Value of the <tt>%name</tt> directive in the Lemon parser
  *   specification.
- * @details This resolves to a function with name <a>PREFIX</a>Alloc and call
+ * @details This resolves to a function with name <em>PREFIX</em>Alloc and call
  *   signature matching @ref largemelon::lemon_parsealloc_func_type.*/
 #define LARGEMELON_LEMON_PARSEALLOC_DECL(PREFIX) \
 extern "C" { extern void * NAME##Alloc(void *(*)(size_t)); }
@@ -978,7 +978,7 @@ extern "C" { extern void * NAME##Alloc(void *(*)(size_t)); }
  *   generated by Lemon.
  * @param PREFIX Value of the <tt>%name</tt> directive in the Lemon parser
  *   specification.
- * @details This resolves to a function with name <a>PREFIX</a>Free and call
+ * @details This resolves to a function with name <em>PREFIX</em>Free and call
  *   signature matching @ref largemelon::lemon_parsefree_func_type.*/
 #define LARGEMELON_LEMON_PARSEFREE_DECL(PREFIX) \
 extern "C" { extern void NAME##Free(void *, void (*)(void *)); }
@@ -989,7 +989,7 @@ extern "C" { extern void NAME##Free(void *, void (*)(void *)); }
  *   specification.
  * @param CONTEXT_TYPE Type for the <tt>%extra_argument</tt> directive in the
  *   Lemon parser specification.
- * @details This resolves to a function with name <a>PREFIX</a> and call
+ * @details This resolves to a function with name <em>PREFIX</em> and call
  *   signature matching @ref largemelon::lemon_parse_func_type.*/
 #define LARGEMELON_LEMON_PARSE_DECL(PREFIX,CONTEXT_TYPE) \
 extern "C" { extern void NAME (void *, int, largemelon::lex_token *, \
@@ -999,7 +999,7 @@ extern "C" { extern void NAME (void *, int, largemelon::lex_token *, \
  *   generated by Lemon.
  * @param PREFIX Value of the <tt>%name</tt> directive in the Lemon parser
  *   specification.
- * @details This resolves to a function with name <a>PREFIX</a>Trace and call
+ * @details This resolves to a function with name <em>PREFIX</em>Trace and call
  *   signature matching @ref largemelon::lemon_parsetrace_func_type.*/
 #define LARGEMELON_LEMON_PARSETRACE_DECL(PREFIX) \
 extern "C" { extern void NAME##Trace(FILE *, char *); }
