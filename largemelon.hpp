@@ -158,7 +158,7 @@ namespace largemelon {
 		//~ static const std::regex RGX_NL = std::regex(R"(\r\n|\r|\n)");
 		//~ std::sregex_iterator nli, rend;
 		text_loc loc;
-		size_t num_newlines, tpos;
+		size_t /*num_newlines,*/ tpos;
 		
 		// The new location starts just after the last position in `prev_loc`.
 		
