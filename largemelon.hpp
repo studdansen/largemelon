@@ -462,7 +462,7 @@ namespace largemelon {
 	/**@brief Executes lexer action code for a single parsing step.
 	 * @tparam ContextType Data type for the context object being passed by
 	 *   pointer between calls to the parser. This is the same as the data
-	 *   type used in the @%<tt>extra_argument</tt> directive in the Lemon
+	 *   type used in the <tt>@%extra_argument</tt> directive in the Lemon
 	 *   specification file, and thus passed as the fourth argument to the
 	 *   function passed to @c parse_func.
 	 * @param mtext Matched text, extracted from parsed text.
@@ -516,7 +516,7 @@ namespace largemelon {
 	 *   a lexer token and passing the matched text into the parser machinery.
 	 * @tparam ContextType Data type for the context object being passed by
 	 *   pointer between calls to the parser. This is the same as the data type
-	 *   used in the <tt>%extra_argument</tt> directive in the Lemon
+	 *   used in the <tt>@%extra_argument</tt> directive in the Lemon
 	 *   specification file, and thus passed as the fourth argument to the
 	 *   function passed to @c parse_func.
 	 * @param mtext Matched text, extracted from parsed text.
