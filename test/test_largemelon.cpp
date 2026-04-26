@@ -439,6 +439,49 @@ namespace largemelon::test {
 	
 	/**@test */
 	TEST_SUITE("mtext_loc tests") {
+		/**@test */
+		TEST_CASE("no newlines") {
+			largemelon::text_loc prev_loc = {1, 26, 1, 29};
+			std::string mtext = "Everything is creepy and dark and dirty.";
+			largemelon::text_loc loc = mtext_loc(prev_loc, mtext);
+			CHECK_EQ(loc.first_lno, 1);
+			CHECK_EQ(loc.first_cno, 30);
+			CHECK_EQ(loc.last_lno, 1);
+			CHECK_EQ(loc.last_cno, prev_loc.last_cno + mtext.size());
+		}
+		/**@test */
+		TEST_CASE("'\\r\\n' at EOL") {
+			text_loc prev_loc = {2, 6, 3, 4};
+			text_loc loc = mtext_loc(prev_loc, "Charlie\r\n");
+			CHECK_EQ(loc, text_loc{3, 5, 4, 0});
+		}
+		/**@test */
+		TEST_CASE("'\\r' at EOL") {
+			text_loc prev_loc = {1, 13, 2, 7};
+			text_loc loc = mtext_loc(prev_loc, "pass away\r");
+			CHECK_EQ(loc, text_loc{2, 8, 3, 0});
+		}
+		/**@test */
+		TEST_CASE("'\\n' at EOL") {
+			text_loc prev_loc = {6, 7, 6, 8};
+			text_loc loc = mtext_loc(prev_loc, "no way queso\n");
+			CHECK_EQ(loc, text_loc{6, 9, 7, 0});
+		}
+		/**@test @ref mtext_loc can handle a mixture of different systems'
+		 *   newline sequences in the same string.*/
+		TEST_CASE("mixture of newline sequences") {
+			text_loc prev_loc = {10, 13, 10, 13};
+			text_loc loc = mtext_loc(prev_loc, "\nlove\r\nlaundry\r\r\nJesse");
+			CHECK_EQ(loc, text_loc{10, 14, 14, 5});
+		}
+		/**@test A zero-length string should never be passed to @ref mtext_loc
+		 *   in practice, but the function's behavior still need to be
+		 *   documented nonetheless.*/
+		TEST_CASE("zero-length string") {
+			text_loc prev_loc = {1, 4, 1, 6};
+			text_loc loc = mtext_loc(prev_loc, "");
+			CHECK_EQ(loc, text_loc{1, 7, 1, 6});
+		}
 		/**@test If @c prev_loc.last_cno is past all the characters on the
 		 *   current line, then the newline sequence is coming up and that
 		 *   erroneous extra column won't matter.*/
