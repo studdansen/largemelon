@@ -140,6 +140,10 @@ endfunction()
      Path to ``lemon.c`` file.
    ``<lempar_c_file>``
      Path to ``lempar.c`` file.
+   
+   .. todo::
+      
+      Ensure this can work for ``MSVC``.
 #]======================================================================]
 function(LemonParse_build_lemon)
 	cmake_parse_arguments(PARSE_ARGV 0 arg "" "" "")
@@ -236,7 +240,7 @@ endfunction()
       )
    
    The ``<variable>`` argument is the target set by
-   :command:`add_custom_target`, which is called internally.
+   :command:`add_custom_command`, which is called internally.
    The ``<input_spec>`` argument is the path to the source file containing the
    parser specification, usually with ``.y`` (or maybe ``.yy``) suffix.
    The ``<output_source>`` argument is the path to the generated C source file.
@@ -397,6 +401,73 @@ function(LemonParse_generate_sources)
 		COMMENT "Generating C/C+ parser sources: `${input_file_}` \
 -> `${output_file_}`"
 	)
+endfunction()
+
+
+
+#[======================================================================[.rst:
+.. command:: LemonParse_get_parser_spec
+   
+   Reads the parser specification and extracts its token names and rule forms.
+   
+   ::
+      
+      LemonParse_get_parser_spec(
+          <spec_filepath>
+          TOKEN_NAMES <token_names_variable>
+          RULE_FORMS <rule_forms_variable>
+      )
+   
+   ``<spec_filepath>`` is the path to the Lemon-compatible parser specification
+   file.
+   
+   The optional arguments are:
+   
+   ``TOKEN_NAMES``
+     Generated list of retrieved token names.
+   
+   ``RULE_FORMS``
+     Generated list of retrieved rule forms.
+   
+   If neither optional argument is used, then this function calls the Lemon
+   executable via ``lemon -g ...`` and then does nothing with the extracted
+   output.
+   
+   .. todo::
+      
+      Does this need to check ``arg_UNPARSED_ARGUMENTS``?
+#]======================================================================]
+function(LemonParse_get_parser_spec)
+	set(opts_ )
+	set(sngval_args_ TOKEN_NAMES RULE_FORMS)
+	set(mulval_args_ )
+	cmake_parse_arguments(PARSE_ARGV 1 arg "${opts_}" "${sngval_args_}"
+		"${mulval_args_}")
+	if(DEFINED arg_KEYWORDS_MISSING_VALUES)
+		message(FATAL_ERROR "Keyword arguments are missing values: "
+			"${arg_KEYWORDS_MISSING_VALUES}")
+	endif()
+	set(spec_filepath_ "${ARGV0}")
+	execute_process(
+		COMMAND ${LemonParse_EXECUTABLE} -g ${spec_filepath_}
+		OUTPUT_VARIABLE raw_output_
+	)
+	if(arg_TOKEN_NAMES)
+		string(REGEX MATCHALL "//[ ]*[0-9]+[ ]*([A-Z][A-Za-z0-9_]*)"
+			raw_token_lines_ ${raw_output_})
+		set(token_names_ "")
+		foreach(mline_ ${raw_token_lines_})
+			string(REGEX REPLACE "//[ ]*[0-9]+[ ]*([A-Z][A-Za-z0-9_]*)"
+				"\\1" oline_ ${mline_})
+			list(APPEND token_names_ ${oline_})
+		endforeach()
+		set(${arg_TOKEN_NAMES} ${token_names_} PARENT_SCOPE)
+	endif()
+	if(arg_RULE_FORMS)
+		string(REGEX MATCHALL "[a-z][A-Za-z0-9_]*[ ]*::=[ ]*[^\.]*\."
+			raw_ruleform_lines_ ${raw_output_})
+		set(${arg_RULE_FORMS} ${raw_ruleform_lines_} PARENT_SCOPE)
+	endif()
 endfunction()
 
 
