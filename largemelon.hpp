@@ -196,12 +196,11 @@ namespace largemelon {
 		// location is simply the value of the previous location's last
 		// position plus the number of positions in `mtext`.
 		
+		loc.last_lno = loc.first_lno + num_newlines;
 		if (num_newlines > 0) {
-			loc.last_lno = loc.first_lno + num_newlines;
 			loc.last_cno = mtext.length() - tpos;
 		}
 		else {
-			loc.last_lno = loc.first_lno;
 			loc.last_cno = prev_loc.last_cno + mtext.length();
 		}
 		
